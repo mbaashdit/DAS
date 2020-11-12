@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">DistrictAutomationSystem</string>
+    <string name="Open">Open</string>
+    <string name="Close">Close</string>
+    <string name="PhotoNotUploaded">Photo Not Uploaded</string>
+    <string name="PhotoUploaded">Photo Uploaded</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="internal_storage">internal_storage</string>
+</resources>
