@@ -50,14 +50,14 @@ public class PhotoNotUploadAdapter extends RecyclerView.Adapter<PhotoNotUploadAd
         //binding the data with the viewholder views
 
           holder.tendername.setText("Tender Code: "+photoDTO1.getTenderCode());
-        holder.tenderagencyName.setText("Agency Name: "+photoDTO1.getAgencyName());
-        holder.tenderprojectname.setText("Project Name: "+photoDTO1.getProjectName());
+        holder.tenderagencyName.setText(photoDTO1.getAgencyName());
+        holder.tenderprojectname.setText(photoDTO1.getProjectName());
         holder.tendercode.setVisibility(View.GONE);//.setText("Tender Code: "+photoDTO1.getTenderCode());
-        holder.tenderprojectcode.setText("Project code: "+photoDTO1.getProjectCode());
-        holder.tenderaggrementDate.setText("Date: "+photoDTO1.getAggrementDate());
-        holder.tenderaggrementValue.setText("Amount: "+photoDTO1.getAggrementValue());
-        holder.tendertimeline.setText("Timeline: "+photoDTO1.getTimeLine());
-        holder.tenderprojectid.setText("Project id: "+photoDTO1.getProjectId());
+        holder.tenderprojectcode.setText(photoDTO1.getProjectCode());
+        holder.tenderaggrementDate.setText(photoDTO1.getAggrementDate());
+        holder.tenderaggrementValue.setText(photoDTO1.getAggrementValue());
+        holder.tendertimeline.setText(photoDTO1.getTimeLine());
+        holder.tenderprojectid.setText(photoDTO1.getProjectId());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,16 +79,23 @@ public class PhotoNotUploadAdapter extends RecyclerView.Adapter<PhotoNotUploadAd
                 String tenderid=photoDTO1.getTenderId()+"";
                 RegPrefManager.getInstance(mCtx).setInitialTenderId(tenderid);
 
-                Intent intent =new Intent(mCtx, InitiationPhotoUploadActivity.class);
-                intent.putExtra("TENDER_ID",tenderid);
-                mCtx.startActivity(intent);
+                notUploadedListener.notUploaded(photoDTO1);
+
             }
         });
     }
 
     //get latitude and longitude from ADdress
 
+    NotUploadedListener notUploadedListener;
 
+    public void setNotUploadedListener(NotUploadedListener notUploadedListener) {
+        this.notUploadedListener = notUploadedListener;
+    }
+
+    public interface NotUploadedListener{
+        void notUploaded(resultResponse resultResponse);
+    }
 
 
     @Override

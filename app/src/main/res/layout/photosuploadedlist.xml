@@ -230,6 +230,30 @@
 
 
             </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <views.MonSemiBold
+                    android:id="@+id/tv_remark_lbl"
+                    android:layout_width="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="Remark" />
+
+                <views.MonRegular
+                    android:layout_toEndOf="@+id/tv_remark_lbl"
+                    android:gravity="end"
+                    android:id="@+id/tv_remarks"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:padding="10dp"
+                    android:text="remark" />
+
+
+            </RelativeLayout>
 
 
             <LinearLayout
@@ -278,7 +302,7 @@
                         android:paddingStart="10dp"
                         android:paddingEnd="10dp"
                         android:paddingBottom="8dp"
-                        android:text="Date" />
+                        android:text="" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -303,7 +327,7 @@
                         android:paddingStart="10dp"
                         android:paddingEnd="10dp"
                         android:paddingBottom="8dp"
-                        android:text="Amount" />
+                        android:text="" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -329,7 +353,7 @@
                         android:paddingStart="10dp"
                         android:paddingEnd="10dp"
                         android:paddingBottom="8dp"
-                        android:text="Timeline" />
+                        android:text="" />
                 </LinearLayout>
             </LinearLayout>
 

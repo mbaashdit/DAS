@@ -2,6 +2,7 @@ package com.example.districtautomationsystem.fragment;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -26,6 +27,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.districtautomationsystem.Adapter.PhotoNotUploadAdapter;
 import com.example.districtautomationsystem.Adapter.PhotoUploadAdapter;
+import com.example.districtautomationsystem.InitiationPhotoUploadActivity;
 import com.example.districtautomationsystem.R;
 import com.example.districtautomationsystem.Response.GetProjectIntiationResponse;
 import com.example.districtautomationsystem.Response.GetProjectIntiationUploadedTender;
@@ -47,12 +49,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
+import static android.app.Activity.RESULT_OK;
 import static com.example.districtautomationsystem.Util.Constants.RESPONSE_BAD;
 import static com.example.districtautomationsystem.Util.Constants.RESPONSE_ERROR;
 import static com.example.districtautomationsystem.Util.Constants.RESPONSE_NOT_FOUND;
 import static com.example.districtautomationsystem.Util.Constants.RESPONSE_OK;
 
-public class ProjectIntiationFragment extends Fragment {
+public class ProjectIntiationFragment extends Fragment implements PhotoNotUploadAdapter.NotUploadedListener {
 
     Calendar dateSelected = Calendar.getInstance();
     RecyclerView recyclerView;
@@ -382,10 +385,12 @@ public class ProjectIntiationFragment extends Fragment {
                         if (status.equals("SUCCESS")) {
                             recyclerView.setVisibility(View.VISIBLE);
                             noRecordTextView.setVisibility(View.GONE);
+                            photoLists.clear();
                             photoLists = response.body().getResult();
                             if (photoLists.size() != 0) {
 
                                 adapter = new PhotoNotUploadAdapter(getActivity(), photoLists);
+                                adapter.setNotUploadedListener(ProjectIntiationFragment.this);
 
                                 //setting adapter to recyclerview
                                 recyclerView.setAdapter(adapter);
@@ -443,5 +448,27 @@ public class ProjectIntiationFragment extends Fragment {
                 = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+
+    @Override
+    public void notUploaded(resultResponse photoDTO1) {
+        String tenderid=photoDTO1.getTenderId()+"";
+        Intent intent =new Intent(getActivity(), InitiationPhotoUploadActivity.class);
+        intent.putExtra("TENDER_ID",tenderid);
+        startActivityForResult(intent,1);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1 && resultCode == RESULT_OK && data != null) {
+            boolean isUploaded = data.getBooleanExtra("data",false);
+            if (isUploaded){
+                getIntiationTenderRecord();
+            }else{
+                Toast.makeText(getActivity(), isUploaded+"", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

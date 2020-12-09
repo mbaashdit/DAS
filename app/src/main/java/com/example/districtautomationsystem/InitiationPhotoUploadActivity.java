@@ -177,6 +177,9 @@ public class InitiationPhotoUploadActivity extends AppCompatActivity implements 
         findViewById(R.id.btn_cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = getIntent();
+                intent.putExtra("data",false);
+                setResult(RESULT_OK,intent);
                 finish();
             }
         });
@@ -211,7 +214,7 @@ public class InitiationPhotoUploadActivity extends AppCompatActivity implements 
     }
 
     private void startDialog() {
-        final CharSequence[] items = {"Take Photo", "Choose from Gallery",
+        final CharSequence[] items = {"Take Photo",
                 "Cancel"};
 
 
@@ -233,13 +236,15 @@ public class InitiationPhotoUploadActivity extends AppCompatActivity implements 
                         openCamera();
                     }
 
-                } else if (items[item].equals("Choose from Gallery")) {
-                    Intent picIntent = new Intent(Intent.ACTION_GET_CONTENT, null);
-                    picIntent.setType("image/*");
-                    picIntent.putExtra("return_data", true);
-                    startActivityForResult(picIntent, SELECT_FILE);
-
-                } else if (items[item].equals("Cancel")) {
+                }
+//                else if (items[item].equals("Choose from Gallery")) {
+//                    Intent picIntent = new Intent(Intent.ACTION_GET_CONTENT, null);
+//                    picIntent.setType("image/*");
+//                    picIntent.putExtra("return_data", true);
+//                    startActivityForResult(picIntent, SELECT_FILE);
+//
+//                }
+                else if (items[item].equals("Cancel")) {
                     dialog.dismiss();
                 }
             }
@@ -460,7 +465,16 @@ public class InitiationPhotoUploadActivity extends AppCompatActivity implements 
 //                if(status == true){
                     if (response.isSuccessful() && response.body() != null) {
                         toastMessage(response.body().isOutcome());
-                        startActivity(new Intent(InitiationPhotoUploadActivity.this, DashboardActivity.class));
+                        Intent intent = getIntent();
+                        intent.putExtra("data",true);
+                        setResult(RESULT_OK,intent);
+                        finish();
+//                        startActivity(new Intent(InitiationPhotoUploadActivity.this, DashboardActivity.class));
+                    }else{
+                        Intent intent = getIntent();
+                        intent.putExtra("data",false);
+                        setResult(RESULT_OK,intent);
+                        finish();
                     }
 //                }
                 }

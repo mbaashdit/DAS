@@ -47,7 +47,7 @@ public class PhotoUploadAdapter extends RecyclerView.Adapter<PhotoUploadAdapter.
 
         //binding the data with the viewholder views
 
-        holder.tendername.setText("Tender ID: "+photoDTO1.getTenderCode());
+        holder.tendername.setText("Tender Code: "+photoDTO1.getTenderCode());
         holder.tenderagencyName.setText(photoDTO1.getAgencyName());
         holder.tenderprojectname.setText(photoDTO1.getProjectName());
         holder.tendercode.setVisibility(View.GONE);//.setText("Tender Code: "+photoDTO1.getTenderCode());
@@ -58,6 +58,7 @@ public class PhotoUploadAdapter extends RecyclerView.Adapter<PhotoUploadAdapter.
         holder.tenderprojectid.setText(photoDTO1.getProjectId());
         holder.mTvLatitude.setText(photoDTO1.getLatitude());
         holder.mTvLongitude.setText(photoDTO1.getLongitude());
+        holder.mTvRemark.setText(photoDTO1.getRemark());
         if(!photoDTO1.getPhotoURL().equals(null) ) {
             String photourl = photoDTO1.getPhotoURL();
 
@@ -93,6 +94,7 @@ public class PhotoUploadAdapter extends RecyclerView.Adapter<PhotoUploadAdapter.
         ImageView displayimage;
         TextView mTvLatitude;
         TextView mTvLongitude;
+        TextView mTvRemark;
         Button uploadbtn;
        // CardView addressCardView;
 
@@ -114,6 +116,7 @@ public class PhotoUploadAdapter extends RecyclerView.Adapter<PhotoUploadAdapter.
 
             mTvLatitude = itemView.findViewById(R.id.tv_latitude);
             mTvLongitude = itemView.findViewById(R.id.tv_longitude);
+            mTvRemark = itemView.findViewById(R.id.tv_remarks);
 
       //      addressCardView = itemView.findViewById(R.id.addressCardView);
 

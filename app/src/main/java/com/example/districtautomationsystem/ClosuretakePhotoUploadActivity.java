@@ -198,7 +198,7 @@ public class ClosuretakePhotoUploadActivity extends AppCompatActivity implements
     }
 
     private void startDialog() {
-        final CharSequence[] items = {"Take Photo", "Choose from Gallery",
+        final CharSequence[] items = {"Take Photo",
                 "Cancel"};
 
 
@@ -220,13 +220,15 @@ public class ClosuretakePhotoUploadActivity extends AppCompatActivity implements
                         openCamera();
                     }
 
-                } else if (items[item].equals("Choose from Gallery")) {
-                    Intent picIntent = new Intent(Intent.ACTION_GET_CONTENT, null);
-                    picIntent.setType("image/*");
-                    picIntent.putExtra("return_data", true);
-                    startActivityForResult(picIntent, SELECT_FILE);
-
-                } else if (items[item].equals("Cancel")) {
+                }
+//                else if (items[item].equals("Choose from Gallery")) {
+//                    Intent picIntent = new Intent(Intent.ACTION_GET_CONTENT, null);
+//                    picIntent.setType("image/*");
+//                    picIntent.putExtra("return_data", true);
+//                    startActivityForResult(picIntent, SELECT_FILE);
+//
+//                }
+                else if (items[item].equals("Cancel")) {
                     dialog.dismiss();
                 }
             }
@@ -423,9 +425,9 @@ public class ClosuretakePhotoUploadActivity extends AppCompatActivity implements
 //                if (status == true) {
                     if (response.isSuccessful() && response.body() != null) {
                         toastMessage(response.body().isOutcome());
-                        Intent intent = new Intent(ClosuretakePhotoUploadActivity.this, DashboardActivity.class);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+//                        Intent intent = new Intent(ClosuretakePhotoUploadActivity.this, DashboardActivity.class);
+//                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+//                        startActivity(intent);
                         finish();
                     }
 
