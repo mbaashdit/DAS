@@ -66,9 +66,10 @@ public class PhotoNotUploadAdapter extends RecyclerView.Adapter<PhotoNotUploadAd
                 String tenderid=photoDTO1.getTenderId()+"";
                 RegPrefManager.getInstance(mCtx).setInitialTenderId(tenderid);
 
-                Intent intent =new Intent(mCtx, InitiationPhotoUploadActivity.class);
-                intent.putExtra("TENDER_ID",tenderid);
-                mCtx.startActivity(intent);
+                notUploadedListener.notUploaded(photoDTO1);
+//                Intent intent =new Intent(mCtx, InitiationPhotoUploadActivity.class);
+//                intent.putExtra("TENDER_ID",tenderid);
+//                mCtx.startActivity(intent);
             }
         });
         holder.uploadbtn.setVisibility(View.GONE);

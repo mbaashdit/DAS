@@ -146,7 +146,7 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
                 mTvUploaded.setTextColor(getResources().getColor(R.color.mdtp_transparent_black));
 
                 currentSearch = "NOT_UPLOADED";
-
+                setDafaultDateFormat();
                 if (isNetworkAvailable()) {
                     getIntiationTenderRecord();
                 } else {
@@ -167,7 +167,7 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
                 mTvUploaded.setTextColor(getResources().getColor(R.color.mdtp_white));
 
                 currentSearch = "UPLOADED";
-
+                setDafaultDateFormat();
                 if (isNetworkAvailable()) {
                     getIntiationTenderUploadedRecord();
                 } else {
@@ -183,20 +183,22 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
                 checkForApiCall();
             }
         });
-        Date c = Calendar.getInstance().getTime();
-        System.out.println("Current time => " + c);
 
-        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-        String formattedDate = df.format(c);
-        mTvToDate.setText(formattedDate);
-
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MONTH, -2);  // two month back
-        SimpleDateFormat df1 = new SimpleDateFormat("dd/MM/yyyy");
-        String formattedDate1 = df1.format(cal.getTime());
-
-        mTvFromDate.setText(formattedDate1);
-        startdate = mTvFromDate.getText().toString().trim();
+        setDafaultDateFormat();
+//        Date c = Calendar.getInstance().getTime();
+//        System.out.println("Current time => " + c);
+//
+//        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+//        String formattedDate = df.format(c);
+//        mTvToDate.setText(formattedDate);
+//
+//        Calendar cal = Calendar.getInstance();
+//        cal.add(Calendar.MONTH, -2);  // two month back
+//        SimpleDateFormat df1 = new SimpleDateFormat("dd/MM/yyyy");
+//        String formattedDate1 = df1.format(cal.getTime());
+//
+//        mTvFromDate.setText(formattedDate1);
+//        startdate = mTvFromDate.getText().toString().trim();
 
 
         Calendar currentcal = Calendar.getInstance();
@@ -218,6 +220,30 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
                 setTodayDateTimeField();
             }
         });
+    }
+
+    private void setDafaultDateFormat() {
+        Date c = Calendar.getInstance().getTime();
+        System.out.println("Current time => " + c);
+
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        String formattedDate = df.format(c);
+        mTvToDate.setText(formattedDate);
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, -2);  // two month back
+        SimpleDateFormat df1 = new SimpleDateFormat("dd/MM/yyyy");
+        String formattedDate1 = df1.format(cal.getTime());
+
+        mTvFromDate.setText(formattedDate1);
+        startdate = mTvFromDate.getText().toString().trim();
+
+
+        Calendar currentcal = Calendar.getInstance();
+        SimpleDateFormat df2 = new SimpleDateFormat("dd/MM/yyyy");
+        String formattedDate2 = df2.format(currentcal.getTime());
+        mTvToDate.setText(formattedDate2);
+        enddate = mTvToDate.getText().toString();
     }
 
 

@@ -155,6 +155,7 @@ public class ProjectCloserFragment extends Fragment {
                 mTvUploaded.setTextColor(getResources().getColor(R.color.mdtp_transparent_black));
 
                 currentSearch = "NOT_UPLOADED";
+                setDafaultDateFormat();
                 if (isNetworkAvailable()) {
                     getCloserTenderRecord();
                 } else {
@@ -174,6 +175,7 @@ public class ProjectCloserFragment extends Fragment {
                 mTvUploaded.setTextColor(getResources().getColor(R.color.mdtp_white));
 
                 currentSearch = "UPLOADED";
+                setDafaultDateFormat();
                 if (isNetworkAvailable()) {
                     getCloserTenderUploadedRecord();
                 } else {
@@ -188,7 +190,24 @@ public class ProjectCloserFragment extends Fragment {
                 checkForApiCall();
             }
         });
+        setDafaultDateFormat();
 
+        mIvFromDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setDateTimeField();
+            }
+        });
+
+        mIvToDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setTodayDateTimeField();
+            }
+        });
+    }
+
+    private void setDafaultDateFormat() {
         Date c = Calendar.getInstance().getTime();
         System.out.println("Current time => " + c);
 
@@ -211,19 +230,6 @@ public class ProjectCloserFragment extends Fragment {
         mTvToDate.setText(formattedDate2);
         enddate = mTvToDate.getText().toString();
 
-        mIvFromDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setDateTimeField();
-            }
-        });
-
-        mIvToDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setTodayDateTimeField();
-            }
-        });
     }
 
     private void setDateTimeField() {

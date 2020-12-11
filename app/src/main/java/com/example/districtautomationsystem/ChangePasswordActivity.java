@@ -138,9 +138,9 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                         break;
                     case RESPONSE_OK:
                         String status = response.body().getStatus();
+                        String message = "";
                         if (status.equals("SUCCESS")) {
-                            String message = response.body().getMessage();
-
+                             message = response.body().getMessage();
 
                             toastMessage(message);
 
@@ -149,7 +149,8 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
                             overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
 
                         } else {
-                            toastMessage("Network is Slow. Please Check After Sometimes.");
+                            message = response.body().getMessage();
+                            toastMessage(message);
                         }
 
                         break;
