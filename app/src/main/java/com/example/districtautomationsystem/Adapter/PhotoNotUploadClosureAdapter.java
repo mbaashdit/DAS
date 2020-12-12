@@ -66,8 +66,9 @@ public class PhotoNotUploadClosureAdapter extends RecyclerView.Adapter<PhotoNotU
                 String tenderid = photoDTO1.getTenderId() + "";
                 RegPrefManager.getInstance(mCtx).setClosureTenderId(tenderid);
 
-                Intent i = new Intent(mCtx, ClosuretakePhotoUploadActivity.class);
-                mCtx.startActivity(i);
+                closureUploadListener.onClosureUpload(position);
+//                Intent i = new Intent(mCtx, ClosuretakePhotoUploadActivity.class);
+//                mCtx.startActivity(i);
             }
         });
 
@@ -82,6 +83,15 @@ public class PhotoNotUploadClosureAdapter extends RecyclerView.Adapter<PhotoNotU
 
     //get latitude and longitude from ADdress
 
+    ClosureUploadListener closureUploadListener;
+
+    public void setClosureUploadListener(ClosureUploadListener closureUploadListener) {
+        this.closureUploadListener = closureUploadListener;
+    }
+
+    public interface ClosureUploadListener{
+        void onClosureUpload(int position);
+    }
 
     @Override
     public int getItemCount() {

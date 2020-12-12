@@ -59,6 +59,7 @@ public class PhotoUploadClosureAdapter extends RecyclerView.Adapter<PhotoUploadC
         holder.tenderprojectid.setText(photoDTO1.getProjectId());
         holder.mTvLatitude.setText(photoDTO1.getLatitude());
         holder.mTvLongitude.setText(photoDTO1.getLongitude());
+        holder.mTvRemark.setText(photoDTO1.getRemark());
         if(!photoDTO1.getPhotoURL().equals(null) ) {
             String photourl = photoDTO1.getPhotoURL();
 
@@ -94,6 +95,7 @@ public class PhotoUploadClosureAdapter extends RecyclerView.Adapter<PhotoUploadC
         ImageView displayimage;
         TextView mTvLatitude;
         TextView mTvLongitude;
+        TextView mTvRemark;
        // CardView addressCardView;
 
         public ChangeLocationHolder(View itemView) {
@@ -113,6 +115,7 @@ public class PhotoUploadClosureAdapter extends RecyclerView.Adapter<PhotoUploadC
 
             mTvLatitude = itemView.findViewById(R.id.tv_latitude);
             mTvLongitude = itemView.findViewById(R.id.tv_longitude);
+            mTvRemark = itemView.findViewById(R.id.tv_remarks);
 
       //      addressCardView = itemView.findViewById(R.id.addressCardView);
 

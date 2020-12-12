@@ -43,6 +43,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -128,111 +130,75 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
         mRlPhotoNotUploaded.setBackgroundResource(R.drawable.selected_btn_bg);
         mRlPhotoUploaded.setBackgroundResource(R.drawable.unselected_btn_bg);
 
-        mIvNoUpload.setColorFilter(ContextCompat.getColor(getActivity(), R.color.mdtp_white), android.graphics.PorterDuff.Mode.SRC_IN);
+        mIvNoUpload.setColorFilter(ContextCompat.getColor(Objects.requireNonNull(getActivity()), R.color.mdtp_white), android.graphics.PorterDuff.Mode.SRC_IN);
         mIvUpload.setColorFilter(ContextCompat.getColor(getActivity(), R.color.mdtp_transparent_black), android.graphics.PorterDuff.Mode.SRC_IN);
 
         mTvNotUploaded.setTextColor(getResources().getColor(R.color.mdtp_white));
 
         currentSearch = "NOT_UPLOADED";
 
-        mRlPhotoNotUploaded.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mRlPhotoNotUploaded.setBackgroundResource(R.drawable.selected_btn_bg);
-                mRlPhotoUploaded.setBackgroundResource(R.drawable.unselected_btn_bg);
-                mIvNoUpload.setColorFilter(ContextCompat.getColor(getActivity(), R.color.mdtp_white), android.graphics.PorterDuff.Mode.SRC_IN);
-                mIvUpload.setColorFilter(ContextCompat.getColor(getActivity(), R.color.mdtp_transparent_black), android.graphics.PorterDuff.Mode.SRC_IN);
-                mTvNotUploaded.setTextColor(getResources().getColor(R.color.mdtp_white));
-                mTvUploaded.setTextColor(getResources().getColor(R.color.mdtp_transparent_black));
+        mRlPhotoNotUploaded.setOnClickListener(view14 -> {
+            mRlPhotoNotUploaded.setBackgroundResource(R.drawable.selected_btn_bg);
+            mRlPhotoUploaded.setBackgroundResource(R.drawable.unselected_btn_bg);
+            mIvNoUpload.setColorFilter(ContextCompat.getColor(Objects.requireNonNull(getActivity()), R.color.mdtp_white), android.graphics.PorterDuff.Mode.SRC_IN);
+            mIvUpload.setColorFilter(ContextCompat.getColor(getActivity(), R.color.mdtp_transparent_black), android.graphics.PorterDuff.Mode.SRC_IN);
+            mTvNotUploaded.setTextColor(getResources().getColor(R.color.mdtp_white));
+            mTvUploaded.setTextColor(getResources().getColor(R.color.mdtp_transparent_black));
 
-                currentSearch = "NOT_UPLOADED";
-                setDafaultDateFormat();
-                if (isNetworkAvailable()) {
-                    getIntiationTenderRecord();
-                } else {
-                    Toast.makeText(getActivity(), "Check Internet Connection", Toast.LENGTH_SHORT).show();
-                }
-
+            currentSearch = "NOT_UPLOADED";
+            setDafaultDateFormat();
+            if (isNetworkAvailable()) {
+                getIntiationTenderRecord();
+            } else {
+                Toast.makeText(getActivity(), "Check Internet Connection", Toast.LENGTH_SHORT).show();
             }
+
         });
-        mRlPhotoUploaded.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mRlPhotoUploaded.setBackgroundResource(R.drawable.selected_btn_bg);
-                mRlPhotoNotUploaded.setBackgroundResource(R.drawable.unselected_btn_bg);
-                mTvNotUploaded.setTextColor(getResources().getColor(R.color.mdtp_transparent_black));
-                mIvNoUpload.setColorFilter(ContextCompat.getColor(getActivity(), R.color.mdtp_transparent_black), android.graphics.PorterDuff.Mode.SRC_IN);
+        mRlPhotoUploaded.setOnClickListener(view13 -> {
+            mRlPhotoUploaded.setBackgroundResource(R.drawable.selected_btn_bg);
+            mRlPhotoNotUploaded.setBackgroundResource(R.drawable.unselected_btn_bg);
+            mTvNotUploaded.setTextColor(getResources().getColor(R.color.mdtp_transparent_black));
+            mIvNoUpload.setColorFilter(ContextCompat.getColor(Objects.requireNonNull(getActivity()), R.color.mdtp_transparent_black), android.graphics.PorterDuff.Mode.SRC_IN);
 
-                mIvUpload.setColorFilter(ContextCompat.getColor(getActivity(), R.color.mdtp_white), android.graphics.PorterDuff.Mode.SRC_IN);
-                mTvUploaded.setTextColor(getResources().getColor(R.color.mdtp_white));
+            mIvUpload.setColorFilter(ContextCompat.getColor(getActivity(), R.color.mdtp_white), android.graphics.PorterDuff.Mode.SRC_IN);
+            mTvUploaded.setTextColor(getResources().getColor(R.color.mdtp_white));
 
-                currentSearch = "UPLOADED";
-                setDafaultDateFormat();
-                if (isNetworkAvailable()) {
-                    getIntiationTenderUploadedRecord();
-                } else {
-                    Toast.makeText(getActivity(), "Check Internet Connection", Toast.LENGTH_SHORT).show();
-                }
+            currentSearch = "UPLOADED";
+            setDafaultDateFormat();
+            if (isNetworkAvailable()) {
+                getIntiationTenderUploadedRecord();
+            } else {
+                Toast.makeText(getActivity(), "Check Internet Connection", Toast.LENGTH_SHORT).show();
             }
         });
 
 
-        mIvSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkForApiCall();
-            }
-        });
+        mIvSearch.setOnClickListener(view15 -> checkForApiCall());
 
         setDafaultDateFormat();
-//        Date c = Calendar.getInstance().getTime();
-//        System.out.println("Current time => " + c);
-//
-//        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-//        String formattedDate = df.format(c);
-//        mTvToDate.setText(formattedDate);
-//
-//        Calendar cal = Calendar.getInstance();
-//        cal.add(Calendar.MONTH, -2);  // two month back
-//        SimpleDateFormat df1 = new SimpleDateFormat("dd/MM/yyyy");
-//        String formattedDate1 = df1.format(cal.getTime());
-//
-//        mTvFromDate.setText(formattedDate1);
-//        startdate = mTvFromDate.getText().toString().trim();
-
 
         Calendar currentcal = Calendar.getInstance();
-        SimpleDateFormat df2 = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat df2 = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         String formattedDate2 = df2.format(currentcal.getTime());
         mTvToDate.setText(formattedDate2);
         enddate = mTvToDate.getText().toString();
 
-        mIvFromDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setDateTimeField();
-            }
-        });
+        mIvFromDate.setOnClickListener(view12 -> setDateTimeField());
 
-        mIvToDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setTodayDateTimeField();
-            }
-        });
+        mIvToDate.setOnClickListener(view1 -> setTodayDateTimeField());
     }
 
     private void setDafaultDateFormat() {
         Date c = Calendar.getInstance().getTime();
         System.out.println("Current time => " + c);
 
-        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         String formattedDate = df.format(c);
         mTvToDate.setText(formattedDate);
 
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MONTH, -2);  // two month back
-        SimpleDateFormat df1 = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat df1 = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         String formattedDate1 = df1.format(cal.getTime());
 
         mTvFromDate.setText(formattedDate1);
@@ -240,7 +206,7 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
 
 
         Calendar currentcal = Calendar.getInstance();
-        SimpleDateFormat df2 = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat df2 = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         String formattedDate2 = df2.format(currentcal.getTime());
         mTvToDate.setText(formattedDate2);
         enddate = mTvToDate.getText().toString();
@@ -254,16 +220,11 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
         mDay = c.get(Calendar.DAY_OF_MONTH);
 
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
-                new DatePickerDialog.OnDateSetListener() {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(Objects.requireNonNull(getContext()),
+                (view, year, monthOfYear, dayOfMonth) -> {
 
-                    @Override
-                    public void onDateSet(DatePicker view, int year,
-                                          int monthOfYear, int dayOfMonth) {
-
-                        mTvFromDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-                        checkForApiCall();
-                    }
+                    mTvFromDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                    checkForApiCall();
                 }, mYear, mMonth, mDay);
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
         datePickerDialog.show();
@@ -276,16 +237,11 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
         mDay = c.get(Calendar.DAY_OF_MONTH);
 
 
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
-                new DatePickerDialog.OnDateSetListener() {
+        DatePickerDialog datePickerDialog = new DatePickerDialog(Objects.requireNonNull(getContext()),
+                (view, year, monthOfYear, dayOfMonth) -> {
 
-                    @Override
-                    public void onDateSet(DatePicker view, int year,
-                                          int monthOfYear, int dayOfMonth) {
-
-                        mTvToDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-                        checkForApiCall();
-                    }
+                    mTvToDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                    checkForApiCall();
                 }, mYear, mMonth, mDay);
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
         datePickerDialog.show();
@@ -319,7 +275,7 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
         Call<GetProjectIntiationUploadedTender> call = webApi.getProjectIntiationUploadedTenderResponse(sp.getStringData(Constants.USER_ID), startdate, enddate);
         call.enqueue(new Callback<GetProjectIntiationUploadedTender>() {
             @Override
-            public void onResponse(Call<GetProjectIntiationUploadedTender> call, Response<GetProjectIntiationUploadedTender> response) {
+            public void onResponse(@NonNull Call<GetProjectIntiationUploadedTender> call,@NonNull Response<GetProjectIntiationUploadedTender> response) {
 
                 progressDialog.setVisibility(View.GONE);
                 int code = response.code();
@@ -341,6 +297,7 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
                         recyclerView.setVisibility(View.GONE);
                         break;
                     case RESPONSE_OK:
+                        assert response.body() != null;
                         String status = response.body().getStatus();
                         if (status.equals("SUCCESS")) {
                             recyclerView.setVisibility(View.VISIBLE);
@@ -369,7 +326,7 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
             }
 
             @Override
-            public void onFailure(Call<GetProjectIntiationUploadedTender> call, Throwable t) {
+            public void onFailure(@NonNull Call<GetProjectIntiationUploadedTender> call,@NonNull Throwable t) {
                 progressDialog.setVisibility(View.GONE);
                 Toast.makeText(getActivity(), "Failed", Toast.LENGTH_SHORT).show();
             }
@@ -386,7 +343,7 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
         Call<GetProjectIntiationResponse> call = webApi.getProjectIntiationResponse(sp.getStringData(Constants.USER_ID), startdate, enddate);
         call.enqueue(new Callback<GetProjectIntiationResponse>() {
             @Override
-            public void onResponse(Call<GetProjectIntiationResponse> call, Response<GetProjectIntiationResponse> response) {
+            public void onResponse(@NonNull Call<GetProjectIntiationResponse> call,@NonNull Response<GetProjectIntiationResponse> response) {
                 progressDialog.setVisibility(View.GONE);
                 int code = response.code();
                 switch (code) {
@@ -407,6 +364,7 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
                         recyclerView.setVisibility(View.GONE);
                         break;
                     case RESPONSE_OK:
+                        assert response.body() != null;
                         String status = response.body().getStatus();
                         if (status.equals("SUCCESS")) {
                             recyclerView.setVisibility(View.VISIBLE);
@@ -435,7 +393,7 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
             }
 
             @Override
-            public void onFailure(Call<GetProjectIntiationResponse> call, Throwable t) {
+            public void onFailure(@NonNull Call<GetProjectIntiationResponse> call,@NonNull Throwable t) {
                 progressDialog.setVisibility(View.GONE);
                 Toast.makeText(getActivity(), "Failed", Toast.LENGTH_SHORT).show();
             }
@@ -471,7 +429,8 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
 //    }
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager
-                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                = (ConnectivityManager) Objects.requireNonNull(getActivity()).getSystemService(Context.CONNECTIVITY_SERVICE);
+        assert connectivityManager != null;
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }

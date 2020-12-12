@@ -27,6 +27,12 @@ public class ProjectClosureUploadedTenderlist {
     private String latitude;
     @SerializedName("longitude")
     private String longitude;
+    @SerializedName("remark")
+    private String remark;
+
+    public String getRemark() {
+        return remark;
+    }
 
     public String getLatitude() {
         return latitude;

@@ -122,6 +122,9 @@ public class ClosuretakePhotoUploadActivity extends AppCompatActivity implements
         findViewById(R.id.btn_cancel).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = getIntent();
+                intent.putExtra("data",false);
+                setResult(RESULT_OK,intent);
                 finish();
             }
         });
@@ -428,6 +431,14 @@ public class ClosuretakePhotoUploadActivity extends AppCompatActivity implements
 //                        Intent intent = new Intent(ClosuretakePhotoUploadActivity.this, DashboardActivity.class);
 //                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 //                        startActivity(intent);
+                        Intent intent = getIntent();
+                        intent.putExtra("data",true);
+                        setResult(RESULT_OK,intent);
+                        finish();
+                    }else{
+                        Intent intent = getIntent();
+                        intent.putExtra("data",false);
+                        setResult(RESULT_OK,intent);
                         finish();
                     }
 
