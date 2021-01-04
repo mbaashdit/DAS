@@ -37,20 +37,14 @@ import androidx.core.content.ContextCompat;
 import androidx.loader.content.CursorLoader;
 
 import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.Priority;
-import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.example.districtautomationsystem.Response.InitiationPhotoUploadResponse;
 import com.example.districtautomationsystem.Util.ApiClient;
 import com.example.districtautomationsystem.Util.Constants;
 import com.example.districtautomationsystem.Util.FileUtils;
 import com.example.districtautomationsystem.Util.RegPrefManager;
-import com.example.districtautomationsystem.Util.ServerApiList;
 import com.example.districtautomationsystem.Util.SharedPrefManager;
 import com.example.districtautomationsystem.Util.WebApi;
 import com.google.android.material.snackbar.Snackbar;
-
-import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -264,47 +258,65 @@ public class InitiationPhotoUploadActivity extends AppCompatActivity implements 
             onSelectFromGalleryResult(data);
 
         } else if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_CAMERA) {
-            if (data.hasExtra("data")) {
-                Bitmap bitmap = (Bitmap) data.getExtras().get("data");
-                onCaptureImageResult(bitmap);
+            if (data != null) {
+                if (data.hasExtra("data")) {
+                    Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+                    onCaptureImageResult(bitmap);
+                }
+            } else {
+                Toast.makeText(this, "null return", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     private void onCaptureImageResult(Bitmap bitmap) {
-        uri = getImageUri(InitiationPhotoUploadActivity.this, bitmap);
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        try {
-            BitmapFactory.decodeStream(getContentResolver().openInputStream(uri), null, options);
-            options.inSampleSize = calculateInSampleSize(options, 100, 100);
-            options.inJustDecodeBounds = false;
-            bmp = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri), null, options);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bmp.compress(Bitmap.CompressFormat.JPEG, 60, baos);
-            imageBytes = baos.toByteArray();
+        if (bitmap != null) {
+            if (!bitmap.equals("")) {
+                uri = getImageUri(InitiationPhotoUploadActivity.this, bitmap);
+                if (uri != null) {
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true;
+                    try {
+                        BitmapFactory.decodeStream(getContentResolver().openInputStream(uri), null, options);
+                        options.inSampleSize = calculateInSampleSize(options, 100, 100);
+                        options.inJustDecodeBounds = false;
+                        bmp = BitmapFactory.decodeStream(getContentResolver().openInputStream(uri), null, options);
+                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                        bmp.compress(Bitmap.CompressFormat.JPEG, 60, baos);
+                        imageBytes = baos.toByteArray();
 
 
-            Log.v("ff", String.valueOf(bmp));
-            Bitmap compress = compressBitmap(bmp);
-            Log.v("ff1", String.valueOf(compress));
+                        Log.v("ff", String.valueOf(bmp));
+                        Bitmap compress = compressBitmap(bmp);
+                        Log.v("ff1", String.valueOf(compress));
 
-            photoIv.setImageBitmap(compress);
-            Uri furi = getImageUri(InitiationPhotoUploadActivity.this, compress);
-            //File finalFile = new File(getRealPathFromUri(uri));
-            File finalFile = FileUtils.getFile(InitiationPhotoUploadActivity.this, furi);
-            imageFilePath = finalFile.toString();
-            Log.v("imagepath", imageFilePath);
+                        photoIv.setImageBitmap(compress);
+                        Uri furi = getImageUri(InitiationPhotoUploadActivity.this, compress);
+                        //File finalFile = new File(getRealPathFromUri(uri));
+                        File finalFile = FileUtils.getFile(InitiationPhotoUploadActivity.this, furi);
+                        imageFilePath = finalFile.toString();
+                        Log.v("imagepath", imageFilePath);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                Toast.makeText(this, "null", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "null", Toast.LENGTH_SHORT).show();
         }
     }
 
     private Uri getImageUri(InitiationPhotoUploadActivity youractivity, Bitmap bitmap) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-        String path = MediaStore.Images.Media.insertImage(youractivity.getContentResolver(), bitmap, "Title", null);
+        String path = "";
+        if (!bitmap.equals("")) {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+            path = MediaStore.Images.Media.insertImage(youractivity.getContentResolver(), bitmap, "Title", null);
+
+        }
         return Uri.parse(path);
     }
 
