@@ -1,10 +1,15 @@
 apply plugin: 'com.android.application'
+apply plugin: 'realm-android'
+// Add the following line:
+apply plugin: 'com.google.gms.google-services'  // Google Services plugin
+// Apply the Crashlytics Gradle plugin
+apply plugin: 'com.google.firebase.crashlytics'
 
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
-        applicationId "com.example.districtautomationsystem"
+        applicationId "com.aashdit.districtautomationsystem"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
@@ -65,4 +70,7 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.4.0'
     implementation 'de.hdodenhof:circleimageview:3.0.2'
     implementation 'info.hoang8f:android-segmented:1.0.6'
+
+    implementation 'com.google.firebase:firebase-crashlytics:17.3.0'
+    implementation 'com.google.firebase:firebase-analytics:18.0.0'
 }

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "702084851552",
+    "project_id": "das-android-3814e",
+    "storage_bucket": "das-android-3814e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:702084851552:android:7d9777a38c25bc9cd0a005",
+        "android_client_info": {
+          "package_name": "com.aashdit.districtautomationsystem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "702084851552-uesubgp51qetiuarl462vpmjqrhnkef6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6B8bB_i0lCZYR-1Q2_PItHkVnZpngTrQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "702084851552-uesubgp51qetiuarl462vpmjqrhnkef6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

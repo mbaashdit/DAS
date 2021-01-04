@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
-import com.example.districtautomationsystem.R;
+import com.aashdit.districtautomationsystem.R;
 
 /**
  * Created by Manabendu on 17/06/20
