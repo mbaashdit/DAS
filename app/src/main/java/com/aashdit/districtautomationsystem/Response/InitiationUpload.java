@@ -11,6 +11,6 @@ public class InitiationUpload extends RealmObject {
     public String tenderid;
     public String userid;
     public String imageFilePath;
-
+    public boolean sync_status;
 
 }

@@ -314,7 +314,7 @@ public class ClosuretakePhotoUploadActivity extends AppCompatActivity implements
     private Uri getImageUri(ClosuretakePhotoUploadActivity youractivity, Bitmap bitmap) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-        String path = MediaStore.Images.Media.insertImage(youractivity.getContentResolver(), bitmap, "Title", null);
+        String path = MediaStore.Images.Media.insertImage(youractivity.getContentResolver(), bitmap, "IMG_"+ System.currentTimeMillis() /*"Title"*/, null);
         return Uri.parse(path);
     }
 
