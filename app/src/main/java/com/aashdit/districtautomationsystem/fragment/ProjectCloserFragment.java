@@ -76,7 +76,7 @@ public class ProjectCloserFragment extends Fragment implements PhotoNotUploadClo
     private int mYear, mMonth, mDay, mHour, mMinute;
     private DatePickerDialog datePickerDialog;
     private SharedPrefManager sp;
-    private String startdate, enddate;
+    private String startdate="", enddate="";
     private ImageView mIvFromDate, mIvToDate, mIvSearch;
 
     private String currentSearch;
@@ -146,9 +146,13 @@ public class ProjectCloserFragment extends Fragment implements PhotoNotUploadClo
 
 
         currentSearch = "NOT_UPLOADED";
+        isAlreadyChanged = sp.getBoolData("CLS_DATE_CHANGES");
         mRlPhotoNotUploaded.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                isAlreadyChanged = true;
+                sp.setStringData("CLS_START_DATE",startdate);
+                sp.setStringData("CLS_END_DATE",enddate);
                 mRlPhotoNotUploaded.setBackgroundResource(R.drawable.selected_btn_bg);
                 mRlPhotoUploaded.setBackgroundResource(R.drawable.unselected_btn_bg);
                 mIvNoUpload.setColorFilter(ContextCompat.getColor(Objects.requireNonNull(getActivity()), R.color.mdtp_white), android.graphics.PorterDuff.Mode.SRC_IN);
@@ -168,6 +172,9 @@ public class ProjectCloserFragment extends Fragment implements PhotoNotUploadClo
         mRlPhotoUploaded.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                isAlreadyChanged = true;
+                sp.setStringData("CLS_START_DATE",startdate);
+                sp.setStringData("CLS_END_DATE",enddate);
                 mRlPhotoUploaded.setBackgroundResource(R.drawable.selected_btn_bg);
                 mRlPhotoNotUploaded.setBackgroundResource(R.drawable.unselected_btn_bg);
                 mTvNotUploaded.setTextColor(getResources().getColor(R.color.mdtp_transparent_black));
@@ -186,37 +193,48 @@ public class ProjectCloserFragment extends Fragment implements PhotoNotUploadClo
             }
         });
 
-        mIvSearch.setOnClickListener(view1 -> checkForApiCall());
+        mIvSearch.setOnClickListener(view1 ->{
+            isAlreadyChanged = true;
+            checkForApiCall();
+            sp.setStringData("CLS_START_DATE",startdate);
+            sp.setStringData("CLS_END_DATE",enddate);
+        });
         setDafaultDateFormat();
 
         mIvFromDate.setOnClickListener(view12 -> setDateTimeField());
 
         mIvToDate.setOnClickListener(view13 -> setTodayDateTimeField());
     }
-
+    private boolean isAlreadyChanged = false;
     private void setDafaultDateFormat() {
-        Date c = Calendar.getInstance().getTime();
-        System.out.println("Current time => " + c);
+        if (!isAlreadyChanged) {
+            Date c = Calendar.getInstance().getTime();
+            System.out.println("Current time => " + c);
 
-        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        String formattedDate = df.format(c);
-        mTvToDate.setText(formattedDate);
+            SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            String formattedDate = df.format(c);
+            mTvToDate.setText(formattedDate);
 
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MONTH, -2);  // two month back
-        SimpleDateFormat df1 = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        String formattedDate1 = df1.format(cal.getTime());
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.MONTH, -2);  // two month back
+            SimpleDateFormat df1 = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            String formattedDate1 = df1.format(cal.getTime());
 
-        mTvFromDate.setText(formattedDate1);
-        startdate = mTvFromDate.getText().toString().trim();
+            mTvFromDate.setText(formattedDate1);
+            startdate = mTvFromDate.getText().toString().trim();
 
 
-        Calendar currentcal = Calendar.getInstance();
-        SimpleDateFormat df2 = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        String formattedDate2 = df2.format(currentcal.getTime());
-        mTvToDate.setText(formattedDate2);
-        enddate = mTvToDate.getText().toString();
-
+            Calendar currentcal = Calendar.getInstance();
+            SimpleDateFormat df2 = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            String formattedDate2 = df2.format(currentcal.getTime());
+            mTvToDate.setText(formattedDate2);
+            enddate = mTvToDate.getText().toString();
+        }else {
+            startdate = sp.getStringData("CLS_START_DATE");
+            enddate = sp.getStringData("CLS_END_DATE");
+            mTvFromDate.setText(startdate);
+            mTvToDate.setText(enddate);
+        }
     }
 
     private void setDateTimeField() {
@@ -416,7 +434,18 @@ public class ProjectCloserFragment extends Fragment implements PhotoNotUploadClo
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
+    @Override
+    public void onDetach() {
+        super.onDetach();
 
+        startdate = mTvFromDate.getText().toString().trim();
+        enddate = mTvToDate.getText().toString().trim();
+
+        startdate = sp.getStringData("CLS_START_DATE");
+        enddate = sp.getStringData("CLS_END_DATE");
+        isAlreadyChanged = true;
+        sp.setBoolData("CLS_DATE_CHANGES",true);
+    }
     @Override
     public void onClosureUpload(int position) {
         Intent i = new Intent(getActivity(), ClosuretakePhotoUploadActivity.class);

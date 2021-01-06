@@ -75,6 +75,7 @@
                 android:background="@drawable/remark_bg"
                 android:gravity="top|left"
                 android:minHeight="100dp"
+                android:maxLength="126"
                 android:textColorHint="@color/text_color"
                 android:textSize="15sp" />
 
