@@ -68,7 +68,8 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
     private ImageView mIvNoUpload, mIvUpload;
     private TextView mTvNotUploaded, mTvUploaded;
     private TextView mTvFromDate, mTvToDate;
-
+    private boolean isNotUploadedSearch = true;
+    private boolean isUploadedSearch = false;
     private int mYear, mMonth, mDay, mHour, mMinute;
     private DatePickerDialog datePickerDialog;
     private SharedPrefManager sp;
@@ -77,7 +78,7 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
     private ArrayList<resultResponse> photoLists;
     private ArrayList<ProjectIntiationUploadedTenderList> uploadedPhotoLists;
     private WebApi webApi;
-    private String startdate="", enddate="";
+    private String startdate = "", enddate = "", ustartdate = "", uenddate = "";
     private ImageView mIvFromDate, mIvToDate, mIvSearch;
 
     private String currentSearch;
@@ -134,11 +135,18 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
         mTvNotUploaded.setTextColor(getResources().getColor(R.color.mdtp_white));
 
         currentSearch = "NOT_UPLOADED";
-        isAlreadyChanged = sp.getBoolData("INI_DATE_CHANGES");
+//        isAlreadyChanged = sp.getBoolData("INI_DATE_CHANGES");
         mRlPhotoNotUploaded.setOnClickListener(view14 -> {
-            isAlreadyChanged = true;
-            sp.setStringData("INI_START_DATE",startdate);
-            sp.setStringData("INI_END_DATE",enddate);
+            isNotUploadedSearch = true;
+            isUploadedSearch = false;
+
+            if (sp.getStringData("INI_NU_START_DATE").equals("") &&
+                    sp.getStringData("INI_NU_END_DATE").equals("")) {
+                setDafaultDateFormat();
+            } else {
+                mTvFromDate.setText(sp.getStringData("INI_NU_START_DATE"));
+                mTvToDate.setText(sp.getStringData("INI_NU_END_DATE"));
+            }
             mRlPhotoNotUploaded.setBackgroundResource(R.drawable.selected_btn_bg);
             mRlPhotoUploaded.setBackgroundResource(R.drawable.unselected_btn_bg);
             mIvNoUpload.setColorFilter(ContextCompat.getColor(Objects.requireNonNull(getActivity()), R.color.mdtp_white), android.graphics.PorterDuff.Mode.SRC_IN);
@@ -147,7 +155,7 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
             mTvUploaded.setTextColor(getResources().getColor(R.color.mdtp_transparent_black));
 
             currentSearch = "NOT_UPLOADED";
-            setDafaultDateFormat();
+//            setDafaultDateFormat();
             if (isNetworkAvailable()) {
                 getIntiationTenderRecord();
             } else {
@@ -156,9 +164,14 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
 
         });
         mRlPhotoUploaded.setOnClickListener(view13 -> {
-            isAlreadyChanged = true;
-            sp.setStringData("INI_START_DATE",startdate);
-            sp.setStringData("INI_END_DATE",enddate);
+            isUploadedSearch = true;
+            isNotUploadedSearch = false;
+            if (sp.getStringData("INI_U_START_DATE").equals("") && sp.getStringData("INI_U_END_DATE").equals("")) {
+                setDafaultDateFormat();
+            } else {
+                mTvFromDate.setText(sp.getStringData("INI_U_START_DATE"));
+                mTvToDate.setText(sp.getStringData("INI_U_END_DATE"));
+            }
             mRlPhotoUploaded.setBackgroundResource(R.drawable.selected_btn_bg);
             mRlPhotoNotUploaded.setBackgroundResource(R.drawable.unselected_btn_bg);
             mTvNotUploaded.setTextColor(getResources().getColor(R.color.mdtp_transparent_black));
@@ -168,7 +181,7 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
             mTvUploaded.setTextColor(getResources().getColor(R.color.mdtp_white));
 
             currentSearch = "UPLOADED";
-            setDafaultDateFormat();
+//            setDafaultDateFormat();
             if (isNetworkAvailable()) {
                 getIntiationTenderUploadedRecord();
             } else {
@@ -178,15 +191,27 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
 
 
         mIvSearch.setOnClickListener(view15 -> {
-                    isAlreadyChanged = true;
+                    startdate = mTvFromDate.getText().toString().trim();
+                    enddate = mTvToDate.getText().toString().trim();
+                    if (isUploadedSearch) {
+                        ustartdate = startdate;
+                        uenddate = enddate;
+                    }
                     checkForApiCall();
-                    sp.setStringData("INI_START_DATE",startdate);
-                    sp.setStringData("INI_END_DATE",enddate);
+                    if (isNotUploadedSearch) {
+                        sp.setStringData("INI_NU_START_DATE", startdate);
+                        sp.setStringData("INI_NU_END_DATE", enddate);
+                    }
+                    if (isUploadedSearch) {
+                        sp.setStringData("INI_U_START_DATE", ustartdate);
+                        sp.setStringData("INI_U_END_DATE", uenddate);
+                    }
+
                 }
         );
-
-        setDafaultDateFormat();
-
+        if (!isNotUploadedSearch || !isUploadedSearch) {
+            setDafaultDateFormat();
+        }
         Calendar currentcal = Calendar.getInstance();
         SimpleDateFormat df2 = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
         String formattedDate2 = df2.format(currentcal.getTime());
@@ -198,36 +223,30 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
         mIvToDate.setOnClickListener(view1 -> setTodayDateTimeField());
     }
 
-    private boolean isAlreadyChanged = false;
+
     private void setDafaultDateFormat() {
-        if (!isAlreadyChanged) {
-            Date c = Calendar.getInstance().getTime();
-            System.out.println("Current time => " + c);
+        Date c = Calendar.getInstance().getTime();
+        System.out.println("Current time => " + c);
 
-            SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            String formattedDate = df.format(c);
-            mTvToDate.setText(formattedDate);
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        String formattedDate = df.format(c);
+        mTvToDate.setText(formattedDate);
 
-            Calendar cal = Calendar.getInstance();
-            cal.add(Calendar.MONTH, -2);  // two month back
-            SimpleDateFormat df1 = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            String formattedDate1 = df1.format(cal.getTime());
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MONTH, -2);  // two month back
+        SimpleDateFormat df1 = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        String formattedDate1 = df1.format(cal.getTime());
 
-            mTvFromDate.setText(formattedDate1);
-            startdate = mTvFromDate.getText().toString().trim();
+        mTvFromDate.setText(formattedDate1);
+        startdate = mTvFromDate.getText().toString().trim();
 
 
-            Calendar currentcal = Calendar.getInstance();
-            SimpleDateFormat df2 = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-            String formattedDate2 = df2.format(currentcal.getTime());
-            mTvToDate.setText(formattedDate2);
-            enddate = mTvToDate.getText().toString();
-        } else {
-            startdate = sp.getStringData("INI_START_DATE");
-            enddate = sp.getStringData("INI_END_DATE");
-            mTvFromDate.setText(startdate);
-            mTvToDate.setText(enddate);
-        }
+        Calendar currentcal = Calendar.getInstance();
+        SimpleDateFormat df2 = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        String formattedDate2 = df2.format(currentcal.getTime());
+        mTvToDate.setText(formattedDate2);
+        enddate = mTvToDate.getText().toString();
+
     }
 
 
@@ -242,7 +261,7 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
                 (view, year, monthOfYear, dayOfMonth) -> {
 
                     mTvFromDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-                    checkForApiCall();
+//                    checkForApiCall();
                 }, mYear, mMonth, mDay);
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
         datePickerDialog.show();
@@ -259,7 +278,7 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
                 (view, year, monthOfYear, dayOfMonth) -> {
 
                     mTvToDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-                    checkForApiCall();
+//                    checkForApiCall();
                 }, mYear, mMonth, mDay);
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
         datePickerDialog.show();
@@ -385,7 +404,7 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
                         assert response.body() != null;
                         String status = response.body().getStatus();
                         if (status.equals("SUCCESS")) {
-                            isAlreadyChanged = true;
+//                            isAlreadyChanged = true;
                             recyclerView.setVisibility(View.VISIBLE);
                             noRecordTextView.setVisibility(View.GONE);
                             photoLists.clear();
@@ -431,10 +450,10 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
         startdate = mTvFromDate.getText().toString().trim();
         enddate = mTvToDate.getText().toString().trim();
 
-        startdate = sp.getStringData("INI_START_DATE");
-        enddate = sp.getStringData("INI_END_DATE");
-        isAlreadyChanged = true;
-        sp.setBoolData("INI_DATE_CHANGES",true);
+//        startdate = sp.getStringData("INI_START_DATE");
+//        enddate = sp.getStringData("INI_END_DATE");
+//        isAlreadyChanged = true;
+//        sp.setBoolData("INI_DATE_CHANGES",true);
     }
 
     /**

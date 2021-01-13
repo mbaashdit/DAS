@@ -75,7 +75,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         // Set the home as default
         // toolbar.setTitle("Project Intiation");
         fragment = new ProjectIntiationFragment();
-        loadFragments(fragment);
+        loadFragments(fragment,"INI");
         image_home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,14 +93,31 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
     }
 
-    private void loadFragments(Fragment fragment) {
+    private void loadFragments(Fragment fragment,String tag) {
         toolbartext.setText("Project Initiation");
         RegPrefManager.getInstance(DashboardActivity.this).setProjectIntiationOrCloser("Initiation");
         fragmentManager = getSupportFragmentManager();
         final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        fragmentTransaction.replace(R.id.frameLayout, fragment);
+        if (fragmentManager.findFragmentByTag(tag) == null) {
+            fragmentTransaction.add(R.id.frameLayout, fragment,tag);
+        }
         fragmentTransaction.commit();
+        if (fragment != null) {
+            if (this.fragment != null){
+                fragmentTransaction.hide(this.fragment);
+            }
+            if (this.fragment != null){
+                fragmentTransaction.hide(this.fragment);
+            }
+
+            if (tag.equals("INI")){
+                fragmentTransaction.show(this.fragment);
+            }
+            if (tag.equals("CLOSURE")){
+                fragmentTransaction.show(this.fragment);
+            }
+        }
 
     }
 
@@ -142,12 +159,14 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                 toolbartext.setText("Project Initiation");
                 RegPrefManager.getInstance(DashboardActivity.this).setProjectIntiationOrCloser("Initiation");
                 fragment = new ProjectIntiationFragment();
+                loadFragments(fragment,"INI");
                 break;
             case R.id.closer:
                 //  toolbar.setTitle("Project Closure");
                 toolbartext.setText("Project Closure");
                 RegPrefManager.getInstance(DashboardActivity.this).setProjectIntiationOrCloser("Closer");
                 fragment = new ProjectCloserFragment();
+                loadFragments(fragment,"CLOSURE");
                 break;
             case R.id.changepassword:
                 startActivity(new Intent(DashboardActivity.this, ChangePasswordActivity.class));
