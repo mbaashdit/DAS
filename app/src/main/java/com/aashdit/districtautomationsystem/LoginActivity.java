@@ -25,6 +25,7 @@ import com.aashdit.districtautomationsystem.Util.ApiClient;
 import com.aashdit.districtautomationsystem.Util.Constants;
 import com.aashdit.districtautomationsystem.Util.SharedPrefManager;
 import com.aashdit.districtautomationsystem.Util.WebApi;
+import com.aashdit.districtautomationsystem.activities.ProjectListActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -150,12 +151,25 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             sp.setBoolData(Constants.APP_LOGIN,true);
 
 
-                            Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                            if (userName.startsWith("io_")) {
+                                Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+
+                                finish();
+                            }else{
+                                Intent intent = new Intent(LoginActivity.this, ProjectListActivity.class);
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+
+                                finish();
+                            }
+                        }else{
+                            Intent intent = new Intent(LoginActivity.this, ProjectListActivity.class);
                             startActivity(intent);
                             overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
 
                             finish();
-                        }else{
                             Toast.makeText(LoginActivity.this, loginObj.optString("message"), Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {

@@ -3,9 +3,9 @@ package com.aashdit.districtautomationsystem.Util;
 public class ServerApiList {
 
 //    public static final String BASE_URL = "http://192.168.3.160:3030/das-web/";
-    public static final String BASE_URL = "http://209.97.136.18:8080/dist_temp/";
+//    public static final String BASE_URL = "http://209.97.136.18:8080/dist_temp/";
 //    public static final String BASE_URL = "http://209.97.136.18:8080/dist_auto_system/";
-//    public static final String BASE_URL = "http://209.97.136.18:8080/DAS_Jajpur/";    //prod JAJ
+    public static final String BASE_URL = "http://distdms-jajpur.com/";    //prod JAJ
 //    public static final String BASE_URL = "http://192.168.1.102:3030/DAS_Jajpur/";
     //"http://distdms-jajpur.com/";
     //"http://209.97.136.18:8080/DAS_Jajpur/";//209.97.136.18:8080  //192.168.43.215:3030 - sujit
