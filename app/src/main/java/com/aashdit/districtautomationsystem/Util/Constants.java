@@ -22,5 +22,6 @@ public class Constants {
     public static String MOBILE = "mobileNumber";
     public static String IMAGE = "image";
     public static String ROLE_NAME = "roleName";
+    public static String GP_ID = "panchayatId";
 
 }

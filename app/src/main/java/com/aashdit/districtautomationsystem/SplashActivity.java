@@ -1,14 +1,16 @@
 package com.aashdit.districtautomationsystem;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.aashdit.districtautomationsystem.Util.ApiClient;
 import com.aashdit.districtautomationsystem.Util.Constants;
 import com.aashdit.districtautomationsystem.Util.SharedPrefManager;
 import com.aashdit.districtautomationsystem.Util.WebApi;
+import com.aashdit.districtautomationsystem.activities.ProjectListActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -82,32 +84,41 @@ public class SplashActivity extends AppCompatActivity {
                         String status = loginObj.optString("status");
                         if (status.equals("SUCCESS")) {
                             JSONObject userResult = loginObj.optJSONObject("userResult");
-                            String userId = userResult.optString("userId");
+                            Long userId = userResult.optLong("userId");
                             String userName = userResult.optString("userName");
                             String name = userResult.optString("name");
                             String emailId = userResult.optString("emailId");
                             String mobileNumber = userResult.optString("mobileNumber");
                             String image = userResult.optString("image");
+                            Long panchayatId = userResult.optLong("panchayatId");
 
                             JSONObject roleResult = loginObj.optJSONObject("roleResult");
                             String roleName = roleResult.optString("roleName");
 
 //                            RegPrefManager.getInstance(SplashActivity.this).setLoginResponse(name, userId, emailId, mobileNumber, password, roleName);
-                            sp.setStringData(Constants.USER_ID,userId);
-                            sp.setStringData(Constants.USER_NAME,userName);
-                            sp.setStringData(Constants.USER_PASSWORD,password);
-                            sp.setStringData(Constants.NAME,name);
-                            sp.setStringData(Constants.EMAIL,emailId);
-                            sp.setStringData(Constants.MOBILE,mobileNumber);
-                            sp.setStringData(Constants.IMAGE,image);
-                            sp.setStringData(Constants.ROLE_NAME,roleName);
+                            sp.setLongData(Constants.USER_ID, userId);
+                            sp.setStringData(Constants.USER_NAME, userName);
+                            sp.setStringData(Constants.USER_PASSWORD, password);
+                            sp.setStringData(Constants.NAME, name);
+                            sp.setStringData(Constants.EMAIL, emailId);
+                            sp.setStringData(Constants.MOBILE, mobileNumber);
+                            sp.setStringData(Constants.IMAGE, image);
+                            sp.setStringData(Constants.ROLE_NAME, roleName);
+                            sp.setLongData(Constants.GP_ID, panchayatId);
 
+                            if (userName.startsWith("io_")) {
+                                Intent intent = new Intent(SplashActivity.this, DashboardActivity.class);
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
 
-                            Intent intent = new Intent(SplashActivity.this, DashboardActivity.class);
-                            startActivity(intent);
-                            overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+                                finish();
+                            } else {
+                                Intent intent = new Intent(SplashActivity.this, ProjectListActivity.class);
+                                startActivity(intent);
+                                overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
 
-                            finish();
+                                finish();
+                            }
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -117,7 +128,7 @@ public class SplashActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<String> call, Throwable t) {
-
+                Log.e("TAG", "onFailure: " + t.getLocalizedMessage());
             }
         });
 //        call.enqueue(new Callback<LoginResponse>() {

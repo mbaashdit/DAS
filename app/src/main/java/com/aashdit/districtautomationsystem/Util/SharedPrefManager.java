@@ -27,18 +27,29 @@ public class SharedPrefManager {
 //        return preferences.getString(STORE_TOKEN, null);
 //    }
 
-    public void setStringData(String KEY,String value){
+    public void setStringData(String KEY, String value) {
         SharedPreferences preferences = mContext.getSharedPreferences(Constants.PREF_APP, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(KEY, value).apply();
     }
 
-    public String getStringData(String KEY){
+    public String getStringData(String KEY) {
         SharedPreferences preferences = mContext.getSharedPreferences(Constants.PREF_APP, Context.MODE_PRIVATE);
-        return preferences.getString(KEY,"");
+        return preferences.getString(KEY, "");
     }
 
-    public void setBoolData(String KEY,boolean value){
+    public void setLongData(String KEY, Long value) {
+        SharedPreferences preferences = mContext.getSharedPreferences(Constants.PREF_APP, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong(KEY, value).apply();
+    }
+
+    public Long getLongData(String KEY) {
+        SharedPreferences preferences = mContext.getSharedPreferences(Constants.PREF_APP, Context.MODE_PRIVATE);
+        return preferences.getLong(KEY, 0L);
+    }
+
+    public void setBoolData(String KEY, boolean value) {
         SharedPreferences preferences = mContext.getSharedPreferences(Constants.PREF_APP, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(KEY, value).apply();

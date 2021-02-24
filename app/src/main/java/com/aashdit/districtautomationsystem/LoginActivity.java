@@ -11,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -122,12 +123,15 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 progressDialog.dismiss();
                 if (response.isSuccessful() && response.body() != null) {
                     try {
+
+                        Log.i("TAG", "onResponse:::::::::::::::::::::::::::::::::::::::::::::::: "+response.body());
+
                         JSONObject loginObj = new JSONObject(response.body());
                         String status = loginObj.optString("status");
                         if (status.equals("SUCCESS")) {
                             Toast.makeText(LoginActivity.this, loginObj.optString("message"), Toast.LENGTH_SHORT).show();
                             JSONObject userResult = loginObj.optJSONObject("userResult");
-                            String userId = userResult.optString("userId");
+                            Long userId = userResult.optLong("userId");
                             String userName = userResult.optString("userName");
                             String name = userResult.optString("name");
                             String emailId = userResult.optString("emailId");
@@ -138,9 +142,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             JSONObject roleResult = loginObj.optJSONObject("roleResult");
                             String roleName = roleResult.optString("roleName");
 
+                            Long panchayatId = userResult.optLong("panchayatId");
+
 //                            RegPrefManager.getInstance(LoginActivity.this).setLoginResponse(name, userId, emailId, mobileNumber, pas, roleName);
 
-                            sp.setStringData(Constants.USER_ID,userId);
+                            sp.setLongData(Constants.USER_ID,userId);
                             sp.setStringData(Constants.USER_NAME,userName);
                             sp.setStringData(Constants.USER_PASSWORD,pas);
                             sp.setStringData(Constants.NAME,name);
@@ -148,6 +154,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             sp.setStringData(Constants.MOBILE,mobileNumber);
                             sp.setStringData(Constants.IMAGE,image);
                             sp.setStringData(Constants.ROLE_NAME,roleName);
+                            sp.setLongData(Constants.GP_ID,panchayatId);
                             sp.setBoolData(Constants.APP_LOGIN,true);
 
 
@@ -165,11 +172,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 finish();
                             }
                         }else{
-                            Intent intent = new Intent(LoginActivity.this, ProjectListActivity.class);
-                            startActivity(intent);
-                            overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-
-                            finish();
+//                            Intent intent = new Intent(LoginActivity.this, ProjectListActivity.class);
+//                            startActivity(intent);
+//                            overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+//
+//                            finish();
                             Toast.makeText(LoginActivity.this, loginObj.optString("message"), Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {

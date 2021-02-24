@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,6 +37,9 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
     public void onBindViewHolder(@NonNull ProjectListHolder holder, int position) {
 
         Project p = projects.get(position);
+        holder.mTvProjectName.setText(p.projectName);
+        holder.mTvProjectFy.setText("FY : "+p.financialYearName);
+        holder.mTvProjectScheme.setText(p.schemeName);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -47,13 +51,17 @@ public class ProjectListAdapter extends RecyclerView.Adapter<ProjectListAdapter.
 
     @Override
     public int getItemCount() {
-        return 5;
+        return projects.size();
     }
 
     public static class ProjectListHolder extends RecyclerView.ViewHolder {
 
+        TextView mTvProjectName,mTvProjectFy,mTvProjectScheme;
         public ProjectListHolder(@NonNull View itemView) {
             super(itemView);
+            mTvProjectName = itemView.findViewById(R.id.cell_tv_proj_title);
+            mTvProjectFy = itemView.findViewById(R.id.cell_tv_proj_fy);
+            mTvProjectScheme = itemView.findViewById(R.id.cell_tv_scheme_name);
         }
     }
     OnProjectClickListener onProjectClickListener;
