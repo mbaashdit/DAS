@@ -13,32 +13,88 @@
         android:background="@color/colorPrimary">
 
         <androidx.appcompat.widget.Toolbar
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:contentInsetStart="0dp">
-
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="Geo Tag"
+                    android:textSize="16sp"
+                    android:textColor="#FFFFFF"/>
+            </RelativeLayout>
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
+    <androidx.core.widget.NestedScrollView
+        android:layout_height="match_parent"
+        android:layout_above="@+id/rl_submit_phase"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/appBarLayout"
-        tools:itemCount="3"
-        android:id="@+id/rv_uploaded_img"/>
+        android:layout_below="@+id/appBarLayout">
 
-    <ImageView
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/rv_uploaded_img"
-        android:src="@drawable/tag"
-        android:id="@+id/iv_geo_tagged"
-        android:layout_marginTop="8dp"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_uploaded_img"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:itemCount="3" />
+
+            <ImageView
+                android:id="@+id/iv_geo_tagged"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rv_uploaded_img"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/tag" />
+
+            <TextView
+                android:id="@+id/tv_remark_lbl"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/iv_geo_tagged"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+                android:text="Remark" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_remark_lbl"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                app:cardCornerRadius="8dp">
+
+                <EditText
+                    android:background="@null"
+                    android:id="@+id/remark"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|left"
+                    android:gravity="top|left"
+                    android:maxLength="120"
+                    android:minHeight="120dp"
+                    android:textColorHint="@color/text_color"
+                    android:textSize="15sp" />
+            </androidx.cardview.widget.CardView>
+
+        </RelativeLayout>
+    </androidx.core.widget.NestedScrollView>
+
 
     <RelativeLayout
-        android:id="@+id/rl_view_phase"
+        android:id="@+id/rl_submit_phase"
         android:background="#FC5185"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
@@ -54,5 +110,11 @@
             android:textColor="#FFFFFF"/>
 
     </RelativeLayout>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:id="@+id/progress"/>
 
 </RelativeLayout>

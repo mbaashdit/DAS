@@ -2,7 +2,7 @@ package com.aashdit.districtautomationsystem.Util;
 
 public class ServerApiList {
 
-//    public static final String BASE_URL = "http://192.168.3.160:3030/das-web/";
+//    public static final String BASE_URL = "http://192.168.3.160:4576/das-web/";
 //    public static final String BASE_URL = "http://209.97.136.18:8080/dist_temp/";
     public static final String BASE_URL = "http://209.97.136.18:8080/dist_auto_system/";
 //    public static final String BASE_URL = "http://192.168.3.160:4576/das-web/";    //prod JAJ

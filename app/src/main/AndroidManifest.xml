@@ -28,7 +28,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="LockedOrientationActivity">
-        <activity android:name=".activities.GeoTaggingActivity"></activity>
+        <activity android:name=".activities.GeoTaggingActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize|adjustPan" ></activity>
         <activity android:name=".activities.ProjectDetailsActivity" />
         <activity android:name=".activities.ProjectListActivity" />
         <activity

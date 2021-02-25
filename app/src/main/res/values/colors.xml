@@ -7,4 +7,5 @@
     <color name="buttoncolor">#374EC9</color>
     <color name="colorPrimarylight">#008577</color>
     <color name="text_color">#585858</color>
+    <color name="color_alpha">#3B000000</color>
 </resources>

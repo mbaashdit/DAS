@@ -2,7 +2,7 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="200dp"
-    android:layout_height="260dp"
+    android:layout_height="wrap_content"
     android:layout_marginStart="8dp"
     android:layout_marginTop="4dp"
     android:layout_marginEnd="8dp"
@@ -12,7 +12,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
 
         <ImageView
@@ -24,14 +24,16 @@
 
 
         <ImageView
+            android:id="@+id/iv_zoom"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_marginTop="16dp"
             android:layout_marginStart="16dp"
-            android:src="@drawable/zoom"/>
+            android:src="@drawable/ic_zoom"/>
 
 
         <ImageView
+            android:id="@+id/iv_delete"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="16dp"
             android:layout_width="30dp"
@@ -43,24 +45,25 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_alignParentBottom="true">
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/cell_iv_capture">
             <TextView
+                android:layout_marginStart="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Lat : 20.232323"
                 android:id="@+id/cell_tv_lat"/>
             <TextView
+                android:layout_marginStart="8dp"
                 android:layout_below="@+id/cell_tv_lat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Long : 20.232323"
                 android:id="@+id/cell_tv_long"/>
             <TextView
+                android:layout_marginStart="8dp"
                 android:layout_below="@+id/cell_tv_long"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Address : Patia,BBSR"
+                android:maxLines="3"
                 android:id="@+id/cell_tv_address"/>
         </RelativeLayout>
 

@@ -82,6 +82,7 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
                                 if(resObj.optString("flag").equals("Success")){
                                     JSONArray resArray = resObj.optJSONArray("awcProjectList");
                                     if(resArray != null && resArray.length() > 0){
+                                        projectList.clear();
                                         for (int i = 0; i < resArray.length(); i++) {
                                             Project project = Project.parseProject(resArray.optJSONObject(i));
                                             projectList.add(project);

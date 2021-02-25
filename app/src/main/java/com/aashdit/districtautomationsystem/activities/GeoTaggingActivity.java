@@ -16,12 +16,17 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.aashdit.districtautomationsystem.Adapter.ImagesAdapter;
 import com.aashdit.districtautomationsystem.Util.Constants;
@@ -51,7 +56,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class GeoTaggingActivity extends AppCompatActivity implements LocationListener {
+import views.ImageFullScreen;
+
+public class GeoTaggingActivity extends AppCompatActivity implements LocationListener, ImagesAdapter.ImagesListener {
 
     private static final String TAG = "GeoTaggingActivity";
 
@@ -68,37 +75,65 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
     private ImagesAdapter adapter;
     private SharedPrefManager sp;
 
+    private String remark = "";
+    private String currentPhaseCode = "";
+    private String currentStageCode = "";
+    private String stageCode = "";
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
         binding = ActivityGeoTaggingBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        setSupportActionBar(binding.toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
 
         sp = SharedPrefManager.getInstance(this);
         userId = sp.getLongData(Constants.USER_ID);
 
         stageId = getIntent().getLongExtra("STAGE_ID", 0L);
         projectId = getIntent().getLongExtra("PROJ_ID", 0L);
+        stageCode = getIntent().getStringExtra("STAGECODE");
+        currentStageCode = getIntent().getStringExtra("CURRENT_STAGE_CODE");
+        currentPhaseCode = getIntent().getStringExtra("CURRENT_PHASE_CODE");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestCameraPermission();
         }
 
+        binding.progress.setVisibility(View.GONE);
         getGeoTagDetailsByProjectIdAndStageId();
-
-
-
         getLocation();
 
-//        LocationFinder finder;
-//        finder = new LocationFinder(this);
-//        if (finder.canGetLocation()) {
-//            latitude = finder.getLatitude();
-//            longitude = finder.getLongitude();
-//            Toast.makeText(this, "lat-lng " + latitude + " — " + longitude, Toast.LENGTH_LONG).show();
-//        } else {
-//            finder.showSettingsAlert();
-//        }
 
+        if (currentPhaseCode.equals("BEFORE_GEO_TAG") || currentPhaseCode.equals("GEO_TAG_REVERTED")) {
+            binding.ivGeoTagged.setVisibility(View.VISIBLE);
+            binding.rlSubmitPhase.setVisibility(View.VISIBLE);
+        } else {
+            binding.ivGeoTagged.setVisibility(View.GONE);
+            binding.rlSubmitPhase.setVisibility(View.GONE);
+        }
+//        if (stageCode.equals(currentStageCode)) {
+//            binding.tvRemarkLbl.setVisibility(View.VISIBLE);
+//            binding.remark.setVisibility(View.VISIBLE);
+//        } else {
+//            binding.tvRemarkLbl.setVisibility(View.GONE);
+//            binding.remark.setVisibility(View.GONE);
+//        }
         binding.ivGeoTagged.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,12 +142,48 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
                 }
             }
         });
+        binding.rlSubmitPhase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                remark = binding.remark.getText().toString().trim();
+                captureGeoTagDetails();
+            }
+        });
     }
 
-    Long currentStageId,userId;
-    String currentStageCode, currentStageName,imagePath;
+    private void captureGeoTagDetails() {
+        AndroidNetworking.post(ServerApiList.BASE_URL.concat("api/awc/anganwadiConstruction/captureGeoTagDetails"))
+                .addBodyParameter("projectId", String.valueOf(projectId))
+                .addBodyParameter("remarks", remark)
+                .addBodyParameter("userId", String.valueOf(userId))
+                .setTag("captureGeoTagDetails")
+                .setPriority(Priority.HIGH)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject resObj = new JSONObject(response);
+                            if (resObj.optString("flag").equals("Success")) {
+                                Toast.makeText(GeoTaggingActivity.this, resObj.optString("Message"), Toast.LENGTH_LONG).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Log.e(TAG, "onError: " + anError.getErrorDetail());
+                    }
+                });
+    }
+
+    Long currentStageId, userId;
+    String currentStageName, imagePath, latestRemarks;
 
     private void getGeoTagDetailsByProjectIdAndStageId() {
+        binding.progress.setVisibility(View.VISIBLE);
         AndroidNetworking.get(ServerApiList.BASE_URL.concat("api/awc/anganwadiConstruction/getGeoTagDetailsByProjectIdAndStageId" +
                 "?projectId=" + projectId + "&stageId=" + stageId))
                 .setTag("stopWorkPlan")
@@ -121,6 +192,7 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
+                        binding.progress.setVisibility(View.GONE);
                         if (Utility.isStringValid(response)) {
                             try {
                                 JSONObject resObj = new JSONObject(response);
@@ -129,17 +201,37 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
                                     projectId = resObj.optLong("projectId");
                                     currentStageCode = resObj.optString("currentStageCode");
                                     currentStageName = resObj.optString("currentStageName");
+                                    currentPhaseCode = resObj.optString("currentPhaseCode");
+                                    latestRemarks = resObj.optString("latestRemarks");
+                                    binding.remark.setText(latestRemarks);
                                     imagePath = resObj.optString("imagePath");
+                                    if (currentPhaseCode.equals("BEFORE_GEO_TAG") || currentPhaseCode.equals("GEO_TAG_REVERTED")) {
+                                        binding.ivGeoTagged.setVisibility(View.VISIBLE);
+                                        binding.rlSubmitPhase.setVisibility(View.VISIBLE);
+                                    } else {
+                                        binding.ivGeoTagged.setVisibility(View.GONE);
+                                        binding.rlSubmitPhase.setVisibility(View.GONE);
+                                    }
 
                                     JSONArray imageArray = resObj.optJSONArray("geoTagList");
                                     if (imageArray != null && imageArray.length() > 0) {
+                                        tagData.clear();
                                         for (int i = 0; i < imageArray.length(); i++) {
                                             TagData tag = TagData.parseTagData(imageArray.optJSONObject(i));
                                             tagData.add(tag);
                                         }
                                     }
-
-                                    adapter = new ImagesAdapter(GeoTaggingActivity.this,tagData,imagePath);
+                                    if (tagData.size() > 0) {
+                                        binding.tvRemarkLbl.setVisibility(View.VISIBLE);
+                                        binding.remark.setVisibility(View.VISIBLE);
+                                    } else {
+                                        binding.tvRemarkLbl.setVisibility(View.GONE);
+                                        binding.remark.setVisibility(View.GONE);
+                                    }
+                                    adapter = new ImagesAdapter(GeoTaggingActivity.this, tagData, imagePath, currentPhaseCode, currentStageCode, stageCode);
+                                    adapter.setImagesListener(GeoTaggingActivity.this);
+                                    binding.rvUploadedImg.setLayoutManager(new LinearLayoutManager(getApplicationContext(),
+                                            RecyclerView.HORIZONTAL, false));
                                     binding.rvUploadedImg.setAdapter(adapter);
                                     adapter.notifyDataSetChanged();
                                 }
@@ -151,7 +243,7 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
 
                     @Override
                     public void onError(ANError anError) {
-
+                        binding.progress.setVisibility(View.GONE);
                     }
                 });
     }
@@ -166,8 +258,6 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
             e.printStackTrace();
         }
     }
-
-    ArrayList<Bitmap> capturedBitmaps = new ArrayList<Bitmap>();
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -184,10 +274,8 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
 
                 Log.i(TAG, "onActivityResult: imagePath tempUri::::: "+tempUri);
                 Log.i(TAG, "onActivityResult: imagePath finalFile::::: "+finalFile);
-                if (photo != null) {
 
-                    captureGeoTagImage(finalFile);
-                }
+                captureGeoTagImage(finalFile);
             }
         }
     }
@@ -215,52 +303,39 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
     //              "projectId="+projectId+"&imagePath="+path+"&latitude="+latitude+"&longitude="+longitude+"&address="+capturedAddress
     private void captureGeoTagImage(File path) {
 
-
+        binding.progress.setVisibility(View.VISIBLE);
         AndroidNetworking.upload(ServerApiList.BASE_URL.concat("api/awc/anganwadiConstruction/captureGeoTagImage"))
-                .addMultipartFile("imagePath",path)
-                .addMultipartParameter("projectId",String.valueOf(projectId))
-                .addMultipartParameter("latitude",String.valueOf(latitude))
-                .addMultipartParameter("longitude",String.valueOf(longitude))
-                .addMultipartParameter("address",String.valueOf(capturedAddress))
-                .addMultipartParameter("userId",String.valueOf(userId))
+                .addMultipartFile("imagePath", path)
+                .addMultipartParameter("projectId", String.valueOf(projectId))
+                .addMultipartParameter("latitude", String.valueOf(latitude))
+                .addMultipartParameter("longitude", String.valueOf(longitude))
+                .addMultipartParameter("address", String.valueOf(capturedAddress))
+                .addMultipartParameter("userId", String.valueOf(userId))
                 .setTag("Upload Capture Image")
                 .setPriority(Priority.HIGH)
                 .build()
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-                        getGeoTagDetailsByProjectIdAndStageId();
+                        binding.progress.setVisibility(View.GONE);
+                        try {
+                            JSONObject resObj = new JSONObject(response);
+                            if (resObj.optString("flag").equals("Success")) {
+                                Toast.makeText(GeoTaggingActivity.this, resObj.optString("Message"), Toast.LENGTH_LONG).show();
+                                getGeoTagDetailsByProjectIdAndStageId();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
 
                     @Override
                     public void onError(ANError anError) {
-                        Log.e(TAG, "onError: "+anError.getErrorDetail() );
+                        binding.progress.setVisibility(View.GONE);
+                        Log.e(TAG, "onError: " + anError.getErrorDetail());
                     }
                 });
 
-
-
-//        AndroidNetworking.post(ServerApiList.BASE_URL.concat("api/awc/anganwadiConstruction/captureGeoTagImage"))
-//                .addBodyParameter("projectId",String.valueOf(projectId))
-//                .addBodyParameter("imagePath",path.getAbsolutePath())
-//                .addBodyParameter("latitude",String.valueOf(latitude))
-//                .addBodyParameter("longitude",String.valueOf(longitude))
-//                .addBodyParameter("address",String.valueOf(capturedAddress))
-//                .addBodyParameter("userId",String.valueOf(userId))
-//                .setTag("Upload Capture Image")
-//                .setPriority(Priority.HIGH)
-//                .build()
-//                .getAsString(new StringRequestListener() {
-//                    @Override
-//                    public void onResponse(String response) {
-//                        getGeoTagDetailsByProjectIdAndStageId();
-//                    }
-//
-//                    @Override
-//                    public void onError(ANError anError) {
-//                        Log.e(TAG, "onError: "+anError.getErrorDetail() );
-//                    }
-//                });
     }
 
     /**
@@ -275,8 +350,6 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
                         // permission is granted
                         if (locationManager != null) {
                             openCamera();
-                        } else {
-                            Toast.makeText(GeoTaggingActivity.this, "Please Enable GPS", Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -362,5 +435,42 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
     @Override
     public void onProviderDisabled(String provider) {
 
+    }
+
+    @Override
+    public void onImageZoom(int position, Long imgId) {
+        new ImageFullScreen(this, "http://209.97.136.18:8080/dist_auto_system/api/awc/anganwadiConstruction/viewAwcProjectGeoTagImage?projectGeoTaggingId=" + imgId);
+
+    }
+
+    @Override
+    public void onImageDelete(int position, Long imgId) {
+
+        AndroidNetworking.post(ServerApiList.BASE_URL.concat("api/awc/anganwadiConstruction/deleteGeoTagImage"))
+                .addBodyParameter("projectGeoTaggingId", String.valueOf(imgId))
+                .addBodyParameter("userId", String.valueOf(userId))
+                .setTag("Delete Capture Image")
+                .setPriority(Priority.HIGH)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject resObj = new JSONObject(response);
+                            if (resObj.optString("flag").equals("Success")) {
+                                Toast.makeText(GeoTaggingActivity.this, resObj.optString("Message"), Toast.LENGTH_LONG).show();
+                                getGeoTagDetailsByProjectIdAndStageId();
+                                adapter.notifyDataSetChanged();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Log.e(TAG, "onError: " + anError.getErrorDetail());
+                    }
+                });
     }
 }

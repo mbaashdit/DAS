@@ -43,6 +43,14 @@
             android:id="@+id/cell_tv_phase_name"/>
 
         <ImageView
+            android:id="@+id/cell_iv_ok"
+            android:layout_toEndOf="@+id/cell_tv_phase_name"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_ok"/>
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/arrow"

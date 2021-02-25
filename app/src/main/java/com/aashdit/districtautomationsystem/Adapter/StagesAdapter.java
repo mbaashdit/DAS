@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -38,6 +39,11 @@ public class StagesAdapter extends RecyclerView.Adapter<StagesAdapter.ProjectLis
     public void onBindViewHolder(@NonNull ProjectListHolder holder, int position) {
 
         Stage p = projects.get(position);
+        if (p.imageUploaded) {
+            holder.mIvOk.setVisibility(View.VISIBLE);
+        } else {
+            holder.mIvOk.setVisibility(View.GONE);
+        }
         holder.mTvPhasePos.setText(String.valueOf(position + 1));
         holder.mTvPhaseName.setText(p.stageName);
 //        if (p.stageId == 1) {
@@ -72,6 +78,7 @@ public class StagesAdapter extends RecyclerView.Adapter<StagesAdapter.ProjectLis
     public static class ProjectListHolder extends RecyclerView.ViewHolder {
 
         TextView mTvPhaseName, mTvPhasePos;
+        ImageView mIvOk;
         RelativeLayout mRlPhaseCount;
 
         public ProjectListHolder(@NonNull View itemView) {
@@ -79,6 +86,7 @@ public class StagesAdapter extends RecyclerView.Adapter<StagesAdapter.ProjectLis
             mTvPhaseName = itemView.findViewById(R.id.cell_tv_phase_name);
             mTvPhasePos = itemView.findViewById(R.id.cell_tv_pos);
             mRlPhaseCount = itemView.findViewById(R.id.rl_phase_count);
+            mIvOk = itemView.findViewById(R.id.cell_iv_ok);
         }
     }
 

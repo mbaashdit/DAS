@@ -13,6 +13,7 @@
         android:background="@color/colorPrimary">
 
         <androidx.appcompat.widget.Toolbar
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
@@ -67,7 +68,7 @@
                         android:id="@+id/tv_dist_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Jajpur"
+                        android:text=""
                         android:textColor="#364F6B"
                         android:textSize="13sp" />
                 </LinearLayout>
@@ -90,7 +91,7 @@
                         android:id="@+id/tv_block_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Korai"
+                        android:text=""
                         android:textColor="#364F6B"
                         android:textSize="13sp" />
                 </LinearLayout>
@@ -113,7 +114,7 @@
                         android:id="@+id/tv_gp_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Panasa"
+                        android:text=""
                         android:textColor="#364F6B"
                         android:textSize="13sp" />
                 </LinearLayout>
@@ -156,7 +157,7 @@
                             android:layout_alignParentEnd="true"
                             android:layout_marginStart="8dp"
                             android:maxLines="1"
-                            android:text="2020-21"
+                            android:text=""
                             android:layout_marginEnd="8dp"
                             android:textColor="#59000000"
                             android:textSize="14sp" />
@@ -186,7 +187,7 @@
                             android:layout_alignParentEnd="true"
                             android:layout_marginStart="8dp"
                             android:maxLines="1"
-                            android:text="Balipokhari"
+                            android:text=""
                             android:layout_marginEnd="8dp"
                             android:textColor="#59000000"
                             android:textSize="14sp" />
@@ -217,7 +218,7 @@
                             android:layout_alignParentEnd="true"
                             android:layout_marginStart="8dp"
                             android:maxLines="1"
-                            android:text="WCD"
+                            android:text=""
                             android:layout_marginEnd="8dp"
                             android:textColor="#59000000"
                             android:textSize="14sp" />
@@ -248,7 +249,7 @@
                             android:layout_alignParentEnd="true"
                             android:layout_marginStart="8dp"
                             android:maxLines="1"
-                            android:text="2020_DMF_Projc-676"
+                            android:text=""
                             android:layout_marginEnd="8dp"
                             android:textColor="#59000000"
                             android:textSize="14sp" />
@@ -278,7 +279,7 @@
                             android:layout_alignParentEnd="true"
                             android:layout_marginStart="8dp"
                             android:maxLines="1"
-                            android:text="SDE548"
+                            android:text=""
                             android:layout_marginEnd="8dp"
                             android:textColor="#59000000"
                             android:textSize="14sp" />
@@ -338,7 +339,7 @@
                             android:layout_alignParentEnd="true"
                             android:layout_marginStart="8dp"
                             android:maxLines="1"
-                            android:text="25-02-2021"
+                            android:text=""
                             android:layout_marginEnd="8dp"
                             android:textColor="#59000000"
                             android:textSize="14sp" />
@@ -368,7 +369,7 @@
                             android:layout_alignParentEnd="true"
                             android:layout_marginStart="8dp"
                             android:maxLines="1"
-                            android:text="25-02-2021"
+                            android:text=""
                             android:layout_marginEnd="8dp"
                             android:textColor="#59000000"
                             android:textSize="14sp" />
@@ -399,7 +400,7 @@
                             android:layout_alignParentEnd="true"
                             android:layout_marginStart="8dp"
                             android:maxLines="1"
-                            android:text="Rs. 125,2548"
+                            android:text=""
                             android:layout_marginEnd="8dp"
                             android:textColor="#59000000"
                             android:textSize="14sp" />
@@ -431,7 +432,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Lorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit ametLorem ipsum dolor sit amet"
+                    android:text=""
                     android:padding="8dp"
                     android:id="@+id/tv_proj_desc"/>
 

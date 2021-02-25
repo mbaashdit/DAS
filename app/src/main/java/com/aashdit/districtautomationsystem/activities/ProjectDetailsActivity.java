@@ -1,5 +1,6 @@
 package com.aashdit.districtautomationsystem.activities;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -46,6 +48,14 @@ public class ProjectDetailsActivity extends AppCompatActivity implements StagesA
     private StagesAdapter adapter;
 
     @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityProjectDetailsBinding.inflate(getLayoutInflater());
@@ -61,7 +71,7 @@ public class ProjectDetailsActivity extends AppCompatActivity implements StagesA
 
         adapter = new StagesAdapter(this, stages);
         adapter.setOnStageClickListener(this);
-        getProjectDetails();
+//        getProjectDetails();
         binding.rlViewPhase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,6 +80,13 @@ public class ProjectDetailsActivity extends AppCompatActivity implements StagesA
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getProjectDetails();
+    }
+
+    private String currentStageCode,currentPhaseCode;
     private void getProjectDetails() {
         AndroidNetworking.get(ServerApiList.BASE_URL.concat("api/awc/anganwadiConstruction/getProjectDetailsByProjectId?projectId="+proj_id))
                 .setTag("projectDetails")
@@ -85,6 +102,7 @@ public class ProjectDetailsActivity extends AppCompatActivity implements StagesA
 
                                     JSONArray stageArr = resObj.optJSONArray("stageList");
                                     if (stageArr != null && stageArr.length() > 0){
+                                        stages.clear();
                                         for (int i = 0; i < stageArr.length(); i++) {
                                             Stage stage = Stage.parseStageResponse(stageArr.optJSONObject(i));
                                             stages.add(stage);
@@ -93,6 +111,8 @@ public class ProjectDetailsActivity extends AppCompatActivity implements StagesA
 
                                     }
 
+                                    currentStageCode = resObj.optString("currentStageCode");
+                                    currentPhaseCode = resObj.optString("currentPhaseCode");
                                     String districtName = resObj.optString("districtName");
                                     binding.tvDistName.setText(districtName);
                                     String blockName = resObj.optString("blockName");
@@ -163,6 +183,9 @@ public class ProjectDetailsActivity extends AppCompatActivity implements StagesA
         Intent intent = new Intent(this,GeoTaggingActivity.class);
         intent.putExtra("STAGE_ID",stages.get(position).stageId);
         intent.putExtra("PROJ_ID",proj_id);
+        intent.putExtra("STAGECODE",stages.get(position).stageCode);
+        intent.putExtra("CURRENT_STAGE_CODE",currentStageCode);
+        intent.putExtra("CURRENT_PHASE_CODE",currentPhaseCode);
         startActivity(intent);
         dialog.dismiss();
     }
