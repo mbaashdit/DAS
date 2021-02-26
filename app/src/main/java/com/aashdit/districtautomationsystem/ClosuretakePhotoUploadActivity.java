@@ -150,7 +150,7 @@ public class ClosuretakePhotoUploadActivity extends AppCompatActivity implements
 
         //get tenderid
         tenderid = RegPrefManager.getInstance(ClosuretakePhotoUploadActivity.this).getClosureTenderId();
-        userid = sp.getStringData(Constants.USER_ID);
+        userid = String.valueOf(sp.getLongData(Constants.USER_ID));
 //        userid = RegPrefManager.getInstance(ClosuretakePhotoUploadActivity.this).getLoginUserid();
         photoIv.setOnClickListener(this);
         uploadbtn.setOnClickListener(this);

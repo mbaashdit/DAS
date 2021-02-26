@@ -309,7 +309,7 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
     private void getIntiationTenderUploadedRecord() {
 
         progressDialog.setVisibility(View.VISIBLE);
-        Call<GetProjectIntiationUploadedTender> call = webApi.getProjectIntiationUploadedTenderResponse(sp.getStringData(Constants.USER_ID), startdate, enddate);
+        Call<GetProjectIntiationUploadedTender> call = webApi.getProjectIntiationUploadedTenderResponse(String.valueOf(sp.getLongData(Constants.USER_ID)), startdate, enddate);
         call.enqueue(new Callback<GetProjectIntiationUploadedTender>() {
             @Override
             public void onResponse(@NonNull Call<GetProjectIntiationUploadedTender> call,@NonNull Response<GetProjectIntiationUploadedTender> response) {
@@ -377,7 +377,7 @@ public class ProjectIntiationFragment extends Fragment implements PhotoNotUpload
 //        progressDialog.setMessage("Loading...");
 //        progressDialog.setCancelable(false);
 
-        Call<GetProjectIntiationResponse> call = webApi.getProjectIntiationResponse(sp.getStringData(Constants.USER_ID), startdate, enddate);
+        Call<GetProjectIntiationResponse> call = webApi.getProjectIntiationResponse(String.valueOf(sp.getLongData(Constants.USER_ID)), startdate, enddate);
         call.enqueue(new Callback<GetProjectIntiationResponse>() {
             @Override
             public void onResponse(@NonNull Call<GetProjectIntiationResponse> call,@NonNull Response<GetProjectIntiationResponse> response) {

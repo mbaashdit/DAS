@@ -122,7 +122,7 @@ public class PhotoNotUploadListActivity extends AppCompatActivity {
         progressDialog.setMessage("Loading...");
         progressDialog.setCancelable(false);
 
-        Call<GetProjectIntiationResponse> call=webApi.getProjectIntiationResponse(sp.getStringData(Constants.USER_ID),startdate,enddate);
+        Call<GetProjectIntiationResponse> call=webApi.getProjectIntiationResponse(String.valueOf(sp.getLongData(Constants.USER_ID)),startdate,enddate);
         call.enqueue(new Callback<GetProjectIntiationResponse>() {
             @Override
             public void onResponse(Call<GetProjectIntiationResponse> call, Response<GetProjectIntiationResponse> response) {
@@ -185,7 +185,7 @@ public class PhotoNotUploadListActivity extends AppCompatActivity {
         progressDialog.setMessage("Loading...");
         progressDialog.setCancelable(false);
 
-        Call<GetProjectClosureTenderlist> call = webApi.getProjectClosureTenderlistResponse(sp.getStringData(Constants.USER_ID),startdate,enddate);
+        Call<GetProjectClosureTenderlist> call = webApi.getProjectClosureTenderlistResponse(String.valueOf(sp.getLongData(Constants.USER_ID)),startdate,enddate);
         call.enqueue(new Callback<GetProjectClosureTenderlist>() {
             @Override
             public void onResponse(Call<GetProjectClosureTenderlist> call, Response<GetProjectClosureTenderlist> response) {

@@ -322,7 +322,7 @@ public class ProjectCloserFragment extends Fragment implements PhotoNotUploadClo
     private void getCloserTenderUploadedRecord() {
 
         progressDialog.setVisibility(View.VISIBLE);
-        Call<GetProjectClosureUploadedTender> call = webApi.getProjectClosureUploadedTenderlistResponse(sp.getStringData(Constants.USER_ID), startdate, enddate);
+        Call<GetProjectClosureUploadedTender> call = webApi.getProjectClosureUploadedTenderlistResponse(String.valueOf(sp.getLongData(Constants.USER_ID)), startdate, enddate);
         call.enqueue(new Callback<GetProjectClosureUploadedTender>() {
             @Override
             public void onResponse(@NonNull Call<GetProjectClosureUploadedTender> call, @NonNull Response<GetProjectClosureUploadedTender> response) {
@@ -386,7 +386,7 @@ public class ProjectCloserFragment extends Fragment implements PhotoNotUploadClo
 
     private void getCloserTenderRecord() {
         progressDialog.setVisibility(View.VISIBLE);
-        Call<GetProjectClosureTenderlist> call = webApi.getProjectClosureTenderlistResponse(sp.getStringData(Constants.USER_ID), startdate, enddate);
+        Call<GetProjectClosureTenderlist> call = webApi.getProjectClosureTenderlistResponse(String.valueOf(sp.getLongData(Constants.USER_ID)), startdate, enddate);
         call.enqueue(new Callback<GetProjectClosureTenderlist>() {
             @Override
             public void onResponse(@NonNull Call<GetProjectClosureTenderlist> call, @NonNull Response<GetProjectClosureTenderlist> response) {

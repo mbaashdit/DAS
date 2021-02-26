@@ -60,7 +60,7 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
         sp = SharedPrefManager.getInstance(this);
         progressDialog = new ProgressDialog(ChangePasswordActivity.this);
 
-        userid = sp.getStringData(Constants.USER_ID);//RegPrefManager.getInstance(ChangePasswordActivity.this).getLoginUserid();
+        userid = String.valueOf(sp.getLongData(Constants.USER_ID));//RegPrefManager.getInstance(ChangePasswordActivity.this).getLoginUserid();
 
 //        findViewById(R.id.image_back).setOnClickListener(new View.OnClickListener() {
 //            @Override

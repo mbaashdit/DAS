@@ -151,7 +151,7 @@ public class InitiationPhotoUploadActivity extends AppCompatActivity implements 
 
         //get tenderid
         tenderid = RegPrefManager.getInstance(InitiationPhotoUploadActivity.this).getInitialTenderId();
-        userid = sp.getStringData(Constants.USER_ID);
+        userid = String.valueOf(sp.getLongData(Constants.USER_ID));
 //        userid = RegPrefManager.getInstance(InitiationPhotoUploadActivity.this).getLoginUserid();
         photoIv.setOnClickListener(this);
         uploadbtn.setOnClickListener(this);
