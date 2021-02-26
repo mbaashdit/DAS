@@ -2,6 +2,7 @@ package com.aashdit.districtautomationsystem.activities;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -15,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,7 +31,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aashdit.districtautomationsystem.Adapter.ImagesAdapter;
+import com.aashdit.districtautomationsystem.LoginActivity;
 import com.aashdit.districtautomationsystem.Util.Constants;
+import com.aashdit.districtautomationsystem.Util.RegPrefManager;
 import com.aashdit.districtautomationsystem.Util.ServerApiList;
 import com.aashdit.districtautomationsystem.Util.SharedPrefManager;
 import com.aashdit.districtautomationsystem.Util.Utility;
@@ -87,7 +91,7 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
         }
         return super.onOptionsItemSelected(item);
     }
-
+    AlertDialog.Builder builder;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,7 +109,7 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
 
         sp = SharedPrefManager.getInstance(this);
         userId = sp.getLongData(Constants.USER_ID);
-
+        builder = new AlertDialog.Builder(this);
         stageId = getIntent().getLongExtra("STAGE_ID", 0L);
         projectId = getIntent().getLongExtra("PROJ_ID", 0L);
         stageCode = getIntent().getStringExtra("STAGECODE");
@@ -120,9 +124,15 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
         getLocation();
 
 
+
         if (currentPhaseCode.equals("BEFORE_GEO_TAG") || currentPhaseCode.equals("GEO_TAG_REVERTED")) {
             binding.ivGeoTagged.setVisibility(View.VISIBLE);
-            binding.rlSubmitPhase.setVisibility(View.VISIBLE);
+//            binding.rlSubmitPhase.setVisibility(View.VISIBLE);
+            if (tagData.size() >0){
+                binding.rlSubmitPhase.setVisibility(View.VISIBLE);
+            }else{
+                binding.rlSubmitPhase.setVisibility(View.GONE);
+            }
         } else {
             binding.ivGeoTagged.setVisibility(View.GONE);
             binding.rlSubmitPhase.setVisibility(View.GONE);
@@ -134,11 +144,22 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
 //            binding.tvRemarkLbl.setVisibility(View.GONE);
 //            binding.remark.setVisibility(View.GONE);
 //        }
+
+        if (longitude == 0.0 || latitude == 0.0) {
+            Toast.makeText(GeoTaggingActivity.this,"Fetching Location, Please wait.", Toast.LENGTH_LONG).show();
+            binding.progress.setVisibility(View.VISIBLE);
+        }else{
+            binding.progress.setVisibility(View.GONE);
+        }
+
         binding.ivGeoTagged.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (longitude != 0.0 || latitude != 0.0) {
                     openCamera();
+                }else{
+                    Toast.makeText(GeoTaggingActivity.this,"Fetching Location, Please wait.", Toast.LENGTH_LONG).show();
+                    binding.progress.setVisibility(View.VISIBLE);
                 }
             }
         });
@@ -146,11 +167,31 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
             @Override
             public void onClick(View v) {
                 remark = binding.remark.getText().toString().trim();
-                captureGeoTagDetails();
+                if (!TextUtils.isEmpty(remark)) {
+                    captureGeoTagDetails();
+                }else{
+                    Toast.makeText(GeoTaggingActivity.this, "Please Enter Remark", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
+    private void showMessage(String msg) {
+        builder.setMessage(msg)
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
 
+                        finish();
+
+                    }
+                });
+
+        //Creating dialog box
+        AlertDialog alert = builder.create();
+        //Setting the title manually
+        alert.setTitle("Exit ?");
+        alert.show();
+    }
     private void captureGeoTagDetails() {
         AndroidNetworking.post(ServerApiList.BASE_URL.concat("api/awc/anganwadiConstruction/captureGeoTagDetails"))
                 .addBodyParameter("projectId", String.valueOf(projectId))
@@ -165,7 +206,8 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
                         try {
                             JSONObject resObj = new JSONObject(response);
                             if (resObj.optString("flag").equals("Success")) {
-                                Toast.makeText(GeoTaggingActivity.this, resObj.optString("Message"), Toast.LENGTH_LONG).show();
+                                showMessage(resObj.optString("Message"));
+//                                Toast.makeText(GeoTaggingActivity.this, resObj.optString("Message"), Toast.LENGTH_LONG).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -197,6 +239,13 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
                             try {
                                 JSONObject resObj = new JSONObject(response);
                                 if (resObj.optString("flag").equals("Success")) {
+
+                                    if (tagData.size() >0){
+                                        binding.rlSubmitPhase.setVisibility(View.VISIBLE);
+                                    }else{
+                                        binding.rlSubmitPhase.setVisibility(View.GONE);
+                                    }
+
                                     currentStageId = resObj.optLong("currentStageId");
                                     projectId = resObj.optLong("projectId");
                                     currentStageCode = resObj.optString("currentStageCode");
@@ -207,7 +256,12 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
                                     imagePath = resObj.optString("imagePath");
                                     if (currentPhaseCode.equals("BEFORE_GEO_TAG") || currentPhaseCode.equals("GEO_TAG_REVERTED")) {
                                         binding.ivGeoTagged.setVisibility(View.VISIBLE);
-                                        binding.rlSubmitPhase.setVisibility(View.VISIBLE);
+//                                        binding.rlSubmitPhase.setVisibility(View.VISIBLE);
+                                        if (tagData.size() >0){
+                                            binding.rlSubmitPhase.setVisibility(View.VISIBLE);
+                                        }else{
+                                            binding.rlSubmitPhase.setVisibility(View.GONE);
+                                        }
                                     } else {
                                         binding.ivGeoTagged.setVisibility(View.GONE);
                                         binding.rlSubmitPhase.setVisibility(View.GONE);
@@ -400,6 +454,7 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
         Log.d("Tag", "LatLng===>" + location.getLatitude() + " " + location.getLongitude());
 
         if (location.getLatitude() != 0.0 && location.getLongitude() != 0.0) {
+            binding.progress.setVisibility(View.GONE);
             latitude = location.getLatitude();
             longitude = location.getLongitude();
 
@@ -419,6 +474,9 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
                 e.printStackTrace();
             }
 
+        } else {
+            Toast.makeText(this, "Fetching Location, Please wait.", Toast.LENGTH_LONG).show();
+            binding.progress.setVisibility(View.VISIBLE);
         }
     }
 

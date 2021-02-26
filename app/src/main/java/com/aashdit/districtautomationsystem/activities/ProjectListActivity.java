@@ -1,9 +1,11 @@
 package com.aashdit.districtautomationsystem.activities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,8 +13,11 @@ import android.util.Log;
 import android.view.View;
 
 import com.aashdit.districtautomationsystem.Adapter.ProjectListAdapter;
+import com.aashdit.districtautomationsystem.DashboardActivity;
+import com.aashdit.districtautomationsystem.LoginActivity;
 import com.aashdit.districtautomationsystem.R;
 import com.aashdit.districtautomationsystem.Util.Constants;
+import com.aashdit.districtautomationsystem.Util.RegPrefManager;
 import com.aashdit.districtautomationsystem.Util.ServerApiList;
 import com.aashdit.districtautomationsystem.Util.SharedPrefManager;
 import com.aashdit.districtautomationsystem.Util.Utility;
@@ -64,9 +69,46 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
             }
         });
 
+        binding.ivLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLogoutDialog();
+            }
+        });
+
+        builder = new AlertDialog.Builder(this);
         getProjects();
     }
-
+    AlertDialog.Builder builder;
+    private void showLogoutDialog() {
+        builder.setMessage("Do you want to close this application ?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+//                        RegPrefManager.getInstance(DashboardActivity.this).clearData();
+//                        Intent intent = new Intent(DashboardActivity.this, LoginActivity.class);
+//                        startActivity(intent);
+//                        finish();
+                        RegPrefManager.getInstance(ProjectListActivity.this).clearData();
+                        prefs.clear();
+                        Intent intent = new Intent(ProjectListActivity.this, LoginActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        //  Action for 'NO' Button
+                        dialog.cancel();
+                    }
+                });
+        //Creating dialog box
+        AlertDialog alert = builder.create();
+        //Setting the title manually
+        alert.setTitle("Exit ?");
+        alert.show();
+    }
     private void getProjects() {
         AndroidNetworking.get(ServerApiList.BASE_URL.concat("api/awc/anganwadiConstruction/getProjectListByGpId?gpId="+gpId))
                 .setTag("stopWorkPlan")

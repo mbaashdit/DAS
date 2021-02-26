@@ -52,6 +52,7 @@ public class SplashActivity extends AppCompatActivity {
                     else {
                         startActivity(new Intent(SplashActivity.this,LoginActivity.class));
                         overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+                        finish();
                     }
 
 //                 String  userid = sp.getStringData(Constants.USER_ID);
@@ -131,71 +132,5 @@ public class SplashActivity extends AppCompatActivity {
                 Log.e("TAG", "onFailure: " + t.getLocalizedMessage());
             }
         });
-//        call.enqueue(new Callback<LoginResponse>() {
-//            @Override
-//            public void onResponse(Call<LoginResponse> call, Response<LoginResponse> response) {
-//
-//                if (response.isSuccessful() && response.body() != null) {
-//                    if (response.body().getStatus().equals("SUCCESS")) {
-//
-//                        String name = response.body().getResult().getName();
-//
-//
-//                        RegPrefManager.getInstance(SplashActivity.this).setLoginResponse(response.body().getResult().getName(),
-//                                response.body().getResult().getUserId(), response.body().getResult().getEmailid(), response.body().getResult().getPhoneNo(),password,userName);
-//
-//                        Intent intent = new Intent(SplashActivity.this, DashboardActivity.class);
-//                        startActivity(intent);
-//                        overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-//
-//                        finish();
-//
-//                    } else {
-//                        Toast.makeText(SplashActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
-//                    }
-//                }else {
-//                    Toast.makeText(SplashActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
-//                }
-//
-////                int code=response.code();
-////                switch (code) {
-////                    case RESPONSE_NOT_FOUND:
-////                        Toast.makeText(getApplicationContext(), "NO REORDS FOUND.", Toast.LENGTH_SHORT).show();
-////
-////                        break;
-////                    case RESPONSE_ERROR:
-////                        Toast.makeText(getApplicationContext(), "NO REORDS FOUND.", Toast.LENGTH_LONG).show();
-////
-////                        break;
-////                    case RESPONSE_BAD:
-////                        Toast.makeText(getApplicationContext(), "NO REORDS FOUND.", Toast.LENGTH_LONG).show();
-////
-////                        break;
-////                    case RESPONSE_OK:
-////                        String status=response.body().getStatus();
-////                        if(status.equals("SUCCESS")){
-////                        String name=response.body().getResult().getName();
-////
-////
-////                            RegPrefManager.getInstance(LoginActivity.this).setLoginResponse(response.body().getResult().getName(),
-////                                    response.body().getResult().getUserId(),response.body().getResult().getEmailid(),response.body().getResult().getPhoneNo());
-////
-////                             Intent intent = new Intent(LoginActivity.this,DashboardActivity.class);
-////                              startActivity(intent);
-////                            overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
-////
-////                        }else {
-////                            Toast.makeText(LoginActivity.this,"Network is Slow. Please Check After Sometimes.",Toast.LENGTH_SHORT).show();
-////                        }
-////
-////                        break;
-////                }
-//            }
-//
-//            @Override
-//            public void onFailure(Call<LoginResponse> call, Throwable t) {
-//                Toast.makeText(SplashActivity.this, "Failed", Toast.LENGTH_SHORT).show();
-//            }
-//        });
     }
 }
