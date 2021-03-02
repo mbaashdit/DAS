@@ -31,9 +31,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aashdit.districtautomationsystem.Adapter.ImagesAdapter;
-import com.aashdit.districtautomationsystem.LoginActivity;
 import com.aashdit.districtautomationsystem.Util.Constants;
-import com.aashdit.districtautomationsystem.Util.RegPrefManager;
 import com.aashdit.districtautomationsystem.Util.ServerApiList;
 import com.aashdit.districtautomationsystem.Util.SharedPrefManager;
 import com.aashdit.districtautomationsystem.Util.Utility;
@@ -124,14 +122,15 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
         getLocation();
 
 
-
-        if (currentPhaseCode.equals("BEFORE_GEO_TAG") || currentPhaseCode.equals("GEO_TAG_REVERTED")) {
-            binding.ivGeoTagged.setVisibility(View.VISIBLE);
+        if (stageId.equals(currentStageId)) {
+            if (currentPhaseCode.equals("BEFORE_GEO_TAG") || currentPhaseCode.equals("GEO_TAG_REVERTED")) {
+                binding.ivGeoTagged.setVisibility(View.VISIBLE);
 //            binding.rlSubmitPhase.setVisibility(View.VISIBLE);
-            if (tagData.size() >0){
-                binding.rlSubmitPhase.setVisibility(View.VISIBLE);
-            }else{
-                binding.rlSubmitPhase.setVisibility(View.GONE);
+                if (tagData.size() > 0) {
+                    binding.rlSubmitPhase.setVisibility(View.VISIBLE);
+                } else {
+                    binding.rlSubmitPhase.setVisibility(View.GONE);
+                }
             }
         } else {
             binding.ivGeoTagged.setVisibility(View.GONE);
@@ -146,20 +145,33 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
 //        }
 
         if (longitude == 0.0 || latitude == 0.0) {
-            Toast.makeText(GeoTaggingActivity.this,"Fetching Location, Please wait.", Toast.LENGTH_LONG).show();
+            Toast.makeText(GeoTaggingActivity.this, "Fetching Location, Please wait.", Toast.LENGTH_LONG).show();
             binding.progress.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             binding.progress.setVisibility(View.GONE);
         }
-
+        if (tagData.size() < 2) {
+            binding.ivGeoTagged.setEnabled(true);
+            binding.ivGeoTagged.setClickable(true);
+        } else {
+            binding.ivGeoTagged.setEnabled(false);
+            binding.ivGeoTagged.setClickable(false);
+        }
         binding.ivGeoTagged.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (longitude != 0.0 || latitude != 0.0) {
-                    openCamera();
-                }else{
-                    Toast.makeText(GeoTaggingActivity.this,"Fetching Location, Please wait.", Toast.LENGTH_LONG).show();
-                    binding.progress.setVisibility(View.VISIBLE);
+                if (tagData.size() < 2) {
+                    binding.ivGeoTagged.setEnabled(true);
+                    binding.ivGeoTagged.setClickable(true);
+                    if (longitude != 0.0 || latitude != 0.0) {
+                        openCamera();
+                    } else {
+                        Toast.makeText(GeoTaggingActivity.this, "Fetching Location, Please wait.", Toast.LENGTH_LONG).show();
+                        binding.progress.setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    binding.ivGeoTagged.setEnabled(false);
+                    binding.ivGeoTagged.setClickable(false);
                 }
             }
         });
@@ -189,7 +201,7 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
         //Creating dialog box
         AlertDialog alert = builder.create();
         //Setting the title manually
-        alert.setTitle("Exit ?");
+        alert.setTitle("GEO Tag");
         alert.show();
     }
     private void captureGeoTagDetails() {
@@ -254,19 +266,20 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
                                     latestRemarks = resObj.optString("latestRemarks");
                                     binding.remark.setText(latestRemarks);
                                     imagePath = resObj.optString("imagePath");
-                                    if (currentPhaseCode.equals("BEFORE_GEO_TAG") || currentPhaseCode.equals("GEO_TAG_REVERTED")) {
-                                        binding.ivGeoTagged.setVisibility(View.VISIBLE);
+                                    if (stageId.equals(currentStageId)) {
+                                        if (currentPhaseCode.equals("BEFORE_GEO_TAG") || currentPhaseCode.equals("GEO_TAG_REVERTED")) {
+                                            binding.ivGeoTagged.setVisibility(View.VISIBLE);
 //                                        binding.rlSubmitPhase.setVisibility(View.VISIBLE);
-                                        if (tagData.size() >0){
-                                            binding.rlSubmitPhase.setVisibility(View.VISIBLE);
-                                        }else{
+                                            if (tagData.size() > 0) {
+                                                binding.rlSubmitPhase.setVisibility(View.VISIBLE);
+                                            } else {
+                                                binding.rlSubmitPhase.setVisibility(View.GONE);
+                                            }
+                                        } else {
+                                            binding.ivGeoTagged.setVisibility(View.GONE);
                                             binding.rlSubmitPhase.setVisibility(View.GONE);
                                         }
-                                    } else {
-                                        binding.ivGeoTagged.setVisibility(View.GONE);
-                                        binding.rlSubmitPhase.setVisibility(View.GONE);
                                     }
-
                                     JSONArray imageArray = resObj.optJSONArray("geoTagList");
                                     if (imageArray != null && imageArray.length() > 0) {
                                         tagData.clear();
@@ -516,6 +529,14 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
                         try {
                             JSONObject resObj = new JSONObject(response);
                             if (resObj.optString("flag").equals("Success")) {
+                                tagData.remove(position);
+                                if (tagData.size()<2) {
+                                    binding.ivGeoTagged.setEnabled(true);
+                                    binding.ivGeoTagged.setClickable(true);
+                                }else{
+                                    binding.ivGeoTagged.setEnabled(false);
+                                    binding.ivGeoTagged.setClickable(false);
+                                }
                                 Toast.makeText(GeoTaggingActivity.this, resObj.optString("Message"), Toast.LENGTH_LONG).show();
                                 getGeoTagDetailsByProjectIdAndStageId();
                                 adapter.notifyDataSetChanged();

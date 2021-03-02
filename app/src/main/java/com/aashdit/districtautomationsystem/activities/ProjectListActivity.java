@@ -3,14 +3,25 @@ package com.aashdit.districtautomationsystem.activities;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.aashdit.districtautomationsystem.Adapter.ProjectListAdapter;
 import com.aashdit.districtautomationsystem.DashboardActivity;
@@ -27,12 +38,16 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class ProjectListActivity extends AppCompatActivity implements ProjectListAdapter.OnProjectClickListener {
 
@@ -72,13 +87,42 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
         binding.ivLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showLogoutDialog();
+                showBottomSheet();
+//                showLogoutDialog();
             }
         });
 
         builder = new AlertDialog.Builder(this);
         getProjects();
     }
+
+    private BottomSheetDialog dialog;
+    private void showBottomSheet() {
+        {
+            View dialogView = getLayoutInflater().inflate(R.layout.bottom_sheet_pause_work, null);
+            dialog = new BottomSheetDialog(this);
+            dialog.setContentView(dialogView);
+
+
+            ImageView mIvClose = dialogView.findViewById(R.id.iv_sheet_pause_work_close);
+            TextView profile = dialogView.findViewById(R.id.tv_profile);
+            TextView logout = dialogView.findViewById(R.id.tv_logout);
+
+            mIvClose.setOnClickListener(view -> {
+                dialog.dismiss();
+            });
+
+            logout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showLogoutDialog();
+                }
+            });
+
+            dialog.show();
+        }
+    }
+
     AlertDialog.Builder builder;
     private void showLogoutDialog() {
         builder.setMessage("Do you want to close this application ?")
