@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aashdit.districtautomationsystem.R;
+import com.aashdit.districtautomationsystem.databinding.CellPhaseListBinding;
 import com.aashdit.districtautomationsystem.model.Stage;
 
 import java.util.ArrayList;
@@ -21,16 +22,19 @@ public class StagesAdapter extends RecyclerView.Adapter<StagesAdapter.ProjectLis
     private static final String TAG = "ProjectListAdapter";
 
     private Context mContext;
-    private ArrayList<Stage> projects;
+    private ArrayList<Stage> stages;
+    private CellPhaseListBinding binding;
 
     public StagesAdapter(Context mContext, ArrayList<Stage> projects) {
         this.mContext = mContext;
-        this.projects = projects;
+        this.stages = projects;
     }
 
     @NonNull
     @Override
     public ProjectListHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+//        binding = CellPhaseListBinding.inflate(LayoutInflater.from(mContext),parent, false);
+//        return new ProjectListHolder(binding.getRoot());
         View v = LayoutInflater.from(mContext).inflate(R.layout.cell_phase_list, parent, false);
         return new ProjectListHolder(v);
     }
@@ -38,7 +42,7 @@ public class StagesAdapter extends RecyclerView.Adapter<StagesAdapter.ProjectLis
     @Override
     public void onBindViewHolder(@NonNull ProjectListHolder holder, int position) {
 
-        Stage p = projects.get(position);
+        Stage p = stages.get(position);
         if (p.imageUploaded) {
             holder.mIvOk.setVisibility(View.VISIBLE);
         } else {
@@ -72,7 +76,7 @@ public class StagesAdapter extends RecyclerView.Adapter<StagesAdapter.ProjectLis
 
     @Override
     public int getItemCount() {
-        return projects.size();
+        return stages.size();
     }
 
     public static class ProjectListHolder extends RecyclerView.ViewHolder {

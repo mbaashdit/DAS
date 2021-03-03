@@ -35,6 +35,7 @@ import com.aashdit.districtautomationsystem.Util.Constants;
 import com.aashdit.districtautomationsystem.Util.ServerApiList;
 import com.aashdit.districtautomationsystem.Util.SharedPrefManager;
 import com.aashdit.districtautomationsystem.Util.Utility;
+import com.aashdit.districtautomationsystem.app.App;
 import com.aashdit.districtautomationsystem.databinding.ActivityGeoTaggingBinding;
 import com.aashdit.districtautomationsystem.model.TagData;
 import com.androidnetworking.AndroidNetworking;
@@ -42,10 +43,12 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 
 import org.json.JSONArray;
@@ -69,7 +72,7 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
     private ActivityGeoTaggingBinding binding;
 
     private final int SETTINGS_REQ_CODE = 101;
-    double longitude = 0.0, latitude = 0.0;
+
 
     private Long stageId, projectId;
 
@@ -144,7 +147,7 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
 //            binding.remark.setVisibility(View.GONE);
 //        }
 
-        if (longitude == 0.0 || latitude == 0.0) {
+        if (App.longitude == 0.0 || App.latitude == 0.0) {
             Toast.makeText(GeoTaggingActivity.this, "Fetching Location, Please wait.", Toast.LENGTH_LONG).show();
             binding.progress.setVisibility(View.VISIBLE);
         } else {
@@ -163,7 +166,7 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
                 if (tagData.size() < 2) {
                     binding.ivGeoTagged.setEnabled(true);
                     binding.ivGeoTagged.setClickable(true);
-                    if (longitude != 0.0 || latitude != 0.0) {
+                    if (App.longitude != 0.0 || App.latitude != 0.0) {
                         openCamera();
                     } else {
                         Toast.makeText(GeoTaggingActivity.this, "Fetching Location, Please wait.", Toast.LENGTH_LONG).show();
@@ -320,6 +323,7 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
     private void getLocation() {
         try {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            assert locationManager != null;
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, this);
         } catch (SecurityException e) {
             e.printStackTrace();
@@ -374,8 +378,8 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
         AndroidNetworking.upload(ServerApiList.BASE_URL.concat("api/awc/anganwadiConstruction/captureGeoTagImage"))
                 .addMultipartFile("imagePath", path)
                 .addMultipartParameter("projectId", String.valueOf(projectId))
-                .addMultipartParameter("latitude", String.valueOf(latitude))
-                .addMultipartParameter("longitude", String.valueOf(longitude))
+                .addMultipartParameter("latitude", String.valueOf(App.latitude))
+                .addMultipartParameter("longitude", String.valueOf(App.longitude))
                 .addMultipartParameter("address", String.valueOf(capturedAddress))
                 .addMultipartParameter("userId", String.valueOf(userId))
                 .setTag("Upload Capture Image")
@@ -468,12 +472,12 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
 
         if (location.getLatitude() != 0.0 && location.getLongitude() != 0.0) {
             binding.progress.setVisibility(View.GONE);
-            latitude = location.getLatitude();
-            longitude = location.getLongitude();
+            App.latitude = location.getLatitude();
+            App.longitude = location.getLongitude();
 
             Geocoder gc = new Geocoder(this, Locale.getDefault());
             try {
-                List<Address> addresses = gc.getFromLocation(latitude, longitude, 1);
+                List<Address> addresses = gc.getFromLocation(App.latitude, App.longitude, 1);
                 StringBuilder sb = new StringBuilder();
                 if (addresses.size() > 0) {
                     Address address = addresses.get(0);
@@ -500,12 +504,52 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
 
     @Override
     public void onProviderEnabled(String provider) {
-
+        isProviderEnabled = true;
+        if (locationManager != null) {
+            try {
+                locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                assert locationManager != null;
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 5, this);
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
+    private boolean isProviderEnabled;
     @Override
     public void onProviderDisabled(String provider) {
+        isProviderEnabled = false;
+        Dexter.withActivity(this)
+                .withPermissions(
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        // check if all permissions are granted
+                        if (report.areAllPermissionsGranted()) {
+                            // do your work now
+//                                Toast.makeText(getApplicationContext(), "All permissions are granted!", Toast.LENGTH_SHORT).show();
+//                            handler.postDelayed(runnable, 2000);
 
+                            getLocation();
+                        }
+
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            // permission is denied permenantly, navigate user to app settings
+                            showSettingsDialog();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                })
+                .onSameThread()
+                .check();
     }
 
     @Override

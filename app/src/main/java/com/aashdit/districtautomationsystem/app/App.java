@@ -15,6 +15,7 @@ import io.realm.RealmConfiguration;
  */
 public class App extends Application {
 
+    public static double longitude = 0.0, latitude = 0.0;
 
     @Override
     public void onCreate() {
