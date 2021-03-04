@@ -124,7 +124,11 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
         getGeoTagDetailsByProjectIdAndStageId();
         getLocation();
 
-
+        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            showGpsDialog();
+        }else{
+            Toast.makeText(GeoTaggingActivity.this, "Fetching Location, Please wait.", Toast.LENGTH_LONG).show();
+        }
         if (stageId.equals(currentStageId)) {
             if (currentPhaseCode.equals("BEFORE_GEO_TAG") || currentPhaseCode.equals("GEO_TAG_REVERTED")) {
                 binding.ivGeoTagged.setVisibility(View.VISIBLE);
@@ -148,8 +152,7 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
 //        }
 
         if (App.longitude == 0.0 || App.latitude == 0.0) {
-            Toast.makeText(GeoTaggingActivity.this, "Fetching Location, Please wait.", Toast.LENGTH_LONG).show();
-            binding.progress.setVisibility(View.VISIBLE);
+             binding.progress.setVisibility(View.VISIBLE);
         } else {
             binding.progress.setVisibility(View.GONE);
         }
@@ -167,7 +170,11 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
                     binding.ivGeoTagged.setEnabled(true);
                     binding.ivGeoTagged.setClickable(true);
                     if (App.longitude != 0.0 || App.latitude != 0.0) {
-                        openCamera();
+                        if(locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                            openCamera();
+                        }else{
+                            Toast.makeText(GeoTaggingActivity.this, "Please enable GPS", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
                         Toast.makeText(GeoTaggingActivity.this, "Fetching Location, Please wait.", Toast.LENGTH_LONG).show();
                         binding.progress.setVisibility(View.VISIBLE);
@@ -380,7 +387,7 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
                 .addMultipartParameter("projectId", String.valueOf(projectId))
                 .addMultipartParameter("latitude", String.valueOf(App.latitude))
                 .addMultipartParameter("longitude", String.valueOf(App.longitude))
-                .addMultipartParameter("address", String.valueOf(capturedAddress))
+                .addMultipartParameter("address", String.valueOf(App.capturedAddress))
                 .addMultipartParameter("userId", String.valueOf(userId))
                 .setTag("Upload Capture Image")
                 .setPriority(Priority.HIGH)
@@ -456,6 +463,39 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
         builder.show();
 
     }
+    private void showGpsDialog() {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(GeoTaggingActivity.this);
+//        builder.setTitle("GPS");
+//        builder.setMessage("Please Enable GPS");
+////        builder.setPositiveButton("GOTO SETTINGS", (dialog, which) -> {
+////            dialog.cancel();
+////            openSettings();
+////        });
+//        builder.setNegativeButton("OK", (dialog, which) -> dialog.cancel());
+//        builder.show();
+
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("GPS is disabled in your device. Would you like to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Goto Settings Page To Enable GPS",
+                        new DialogInterface.OnClickListener(){
+                            public void onClick(DialogInterface dialog, int id){
+                                Intent callGPSSettingIntent = new Intent(
+                                        android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                startActivity(callGPSSettingIntent);
+                            }
+                        });
+        alertDialogBuilder.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int id){
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+
+    }
 
     private void openSettings() {
         Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -464,7 +504,7 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
         startActivityForResult(intent, SETTINGS_REQ_CODE);
     }
 
-    String capturedAddress = "";
+//    String capturedAddress = "";
 
     @Override
     public void onLocationChanged(Location location) {
@@ -485,7 +525,7 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
                         sb.append(address.getAddressLine(i)).append("\n");
                     }
                     if (address.getAddressLine(0) != null)
-                        capturedAddress = address.getAddressLine(0);
+                        App.capturedAddress = address.getAddressLine(0);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -499,7 +539,9 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-
+        if(!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            Toast.makeText(this, "Please Enable GPS", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

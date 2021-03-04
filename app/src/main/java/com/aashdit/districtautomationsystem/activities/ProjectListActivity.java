@@ -6,11 +6,20 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -32,6 +41,7 @@ import com.aashdit.districtautomationsystem.Util.RegPrefManager;
 import com.aashdit.districtautomationsystem.Util.ServerApiList;
 import com.aashdit.districtautomationsystem.Util.SharedPrefManager;
 import com.aashdit.districtautomationsystem.Util.Utility;
+import com.aashdit.districtautomationsystem.app.App;
 import com.aashdit.districtautomationsystem.databinding.ActivityProjectListBinding;
 import com.aashdit.districtautomationsystem.model.Project;
 import com.androidnetworking.AndroidNetworking;
@@ -39,6 +49,11 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,9 +62,11 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
-public class ProjectListActivity extends AppCompatActivity implements ProjectListAdapter.OnProjectClickListener {
+public class ProjectListActivity extends AppCompatActivity implements ProjectListAdapter.OnProjectClickListener,
+        LocationListener {
 
     private static final String TAG = "ProjectListActivity";
 
@@ -91,11 +108,22 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
 //                showLogoutDialog();
             }
         });
-
+        getLocation();
         builder = new AlertDialog.Builder(this);
         getProjects();
     }
 
+    private LocationManager locationManager;
+
+    private void getLocation() {
+        try {
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            assert locationManager != null;
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, this);
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        }
+    }
     private BottomSheetDialog dialog;
     private void showBottomSheet() {
         {
@@ -195,5 +223,98 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
         Intent detailsIntent = new Intent(this, ProjectDetailsActivity.class);
         detailsIntent.putExtra("PROJ_ID",projectList.get(position).projectId);
         startActivity(detailsIntent);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d("Tag", "LatLng===>" + location.getLatitude() + " " + location.getLongitude());
+
+        if (location.getLatitude() != 0.0 && location.getLongitude() != 0.0) {
+            binding.progress.setVisibility(View.GONE);
+            App.latitude = location.getLatitude();
+            App.longitude = location.getLongitude();
+
+            Geocoder gc = new Geocoder(this, Locale.getDefault());
+            try {
+                List<Address> addresses = gc.getFromLocation(App.latitude, App.longitude, 1);
+                StringBuilder sb = new StringBuilder();
+                if (addresses.size() > 0) {
+                    Address address = addresses.get(0);
+                    for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
+                        sb.append(address.getAddressLine(i)).append("\n");
+                    }
+                    if (address.getAddressLine(0) != null)
+                        App.capturedAddress = address.getAddressLine(0);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+        Dexter.withActivity(this)
+                .withPermissions(
+                        Manifest.permission.ACCESS_COARSE_LOCATION,
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        // check if all permissions are granted
+                        if (report.areAllPermissionsGranted()) {
+                            // do your work now
+//                                Toast.makeText(getApplicationContext(), "All permissions are granted!", Toast.LENGTH_SHORT).show();
+//                            handler.postDelayed(runnable, 2000);
+
+                            getLocation();
+                        }
+
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            // permission is denied permenantly, navigate user to app settings
+                            showSettingsDialog();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                })
+                .onSameThread()
+                .check();
+    }
+
+    private void showSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(ProjectListActivity.this);
+        builder.setTitle("Need Permissions");
+        builder.setMessage("This app needs permission to use this feature. You can grant them in app settings.");
+        builder.setPositiveButton("GOTO SETTINGS", (dialog, which) -> {
+            dialog.cancel();
+            openSettings();
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+        builder.show();
+
+    }
+
+    private void openSettings() {
+        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        int SETTINGS_REQ_CODE = 101;
+        startActivityForResult(intent, SETTINGS_REQ_CODE);
     }
 }
