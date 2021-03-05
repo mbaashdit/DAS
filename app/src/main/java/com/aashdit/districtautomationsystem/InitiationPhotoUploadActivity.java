@@ -47,6 +47,9 @@ import com.aashdit.districtautomationsystem.Util.SharedPrefManager;
 import com.aashdit.districtautomationsystem.Util.WebApi;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Calendar;
@@ -339,6 +342,12 @@ public class InitiationPhotoUploadActivity extends AppCompatActivity implements 
 
         }
         return Uri.parse(path);
+    }
+    // convert from bitmap to byte array
+    public byte[] getBytesFromBitmap(Bitmap bitmap) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, stream);
+        return stream.toByteArray();
     }
 
     private Bitmap compressBitmap(Bitmap btm) {
