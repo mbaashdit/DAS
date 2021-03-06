@@ -104,10 +104,19 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
         binding.ivLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showBottomSheet();
-//                showLogoutDialog();
+//                showBottomSheet();
+                showLogoutDialog();
             }
         });
+
+        binding.ivProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent profileIntent = new Intent (ProjectListActivity.this,ProfileActivity.class);
+                startActivity(profileIntent);
+            }
+        });
+
         getLocation();
         builder = new AlertDialog.Builder(this);
         getProjects();

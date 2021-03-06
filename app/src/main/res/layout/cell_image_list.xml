@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="200dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="8dp"
     android:layout_marginTop="4dp"
@@ -10,64 +10,112 @@
     app:cardElevation="4dp"
     app:cardCornerRadius="8dp">
 
-    <RelativeLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
 
         <ImageView
+            android:id="@+id/cell_iv_capture"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="300dp"
             android:scaleType="fitXY"
             android:src="@drawable/matfoundation"
-            android:id="@+id/cell_iv_capture"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <ImageView
             android:id="@+id/iv_zoom"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:src="@drawable/ic_zoom"/>
+            android:src="@drawable/ic_zoom"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <ImageView
             android:id="@+id/iv_delete"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="16dp"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
             android:layout_marginTop="16dp"
-            android:layout_marginStart="16dp"
-            android:src="@drawable/ic_close"/>
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_close"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/cell_iv_capture">
-            <TextView
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_map"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_centerVertical="true"
+                android:layout_margin="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_width="wrap_content"
+                android:layout_marginBottom="8dp"
+                app:cardCornerRadius="8dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_map" />
+
+            </androidx.cardview.widget.CardView>
+
+            <RelativeLayout
+                android:layout_toEndOf="@+id/cv_map"
+                android:layout_centerVertical="true"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/cell_tv_lat"/>
-            <TextView
-                android:layout_marginStart="8dp"
-                android:layout_below="@+id/cell_tv_lat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/cell_tv_long"/>
-            <TextView
-                android:layout_marginStart="8dp"
-                android:layout_below="@+id/cell_tv_long"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLines="3"
-                android:id="@+id/cell_tv_address"/>
+                android:layout_marginEnd="8dp"
+                android:background="#AD303030">
+
+                <views.MonSemiBold
+                    android:id="@+id/cell_tv_lat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF" />
+
+                <views.MonSemiBold
+                    android:id="@+id/cell_tv_long"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/cell_tv_lat"
+                    android:layout_marginStart="8dp"
+                    android:textSize="12sp"
+                    android:textColor="#FFFFFF" />
+
+                <views.MonSemiBold
+                    android:id="@+id/cell_tv_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/cell_tv_long"
+                    android:layout_marginStart="8dp"
+                    android:textSize="12sp"
+                    android:maxLines="3"
+                    android:textColor="#FFFFFF" />
+            </RelativeLayout>
+
         </RelativeLayout>
 
 
-    </RelativeLayout>
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.cardview.widget.CardView>

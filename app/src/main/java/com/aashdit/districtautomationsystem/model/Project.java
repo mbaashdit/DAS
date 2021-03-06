@@ -9,6 +9,7 @@ public class Project {
     public String schemeName;
     public String projectName;
     public String phaseName;
+    public String actualProjectStatus;
     public Long projectId;
 
     public static Project parseProject(JSONObject object){
@@ -19,6 +20,7 @@ public class Project {
         project.schemeName = object.optString("schemeName");
         project.projectName = object.optString("projectName");
         project.phaseName = object.optString("phaseName");
+        project.actualProjectStatus = object.optString("actualProjectStatus");
         project.projectId = object.optLong("projectId");
 
         return project;

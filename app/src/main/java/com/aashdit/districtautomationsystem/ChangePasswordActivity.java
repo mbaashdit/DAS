@@ -144,9 +144,11 @@ public class ChangePasswordActivity extends AppCompatActivity implements View.On
 
                             toastMessage(message);
 
-                            Intent intent = new Intent(ChangePasswordActivity.this, DashboardActivity.class);
-                            startActivity(intent);
-                            overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+                            sp.setStringData(Constants.USER_PASSWORD,newpasswordTv.getText().toString());
+                            finish();
+//                            Intent intent = new Intent(ChangePasswordActivity.this, DashboardActivity.class);
+//                            startActivity(intent);
+//                            overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
 
                         } else {
                             message = response.body().getMessage();

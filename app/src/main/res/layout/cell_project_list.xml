@@ -14,18 +14,30 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/cell_tv_proj_title"
+        <ImageView
+            android:id="@+id/iv_status"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_ongoing" />
+
+
+        <views.MonBold
+            android:id="@+id/cell_tv_proj_title"
+            android:layout_width="match_parent"
+            android:layout_marginEnd="2dp"
+            android:layout_toStartOf="@+id/rl_scheme_holder"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:maxLines="2"
-            android:text="Balipokhari AWC Building"
+            android:text=""
             android:textColor="#364F6B"
             android:textSize="16sp" />
 
-        <TextView
+        <views.MonSemiBold
             android:id="@+id/cell_tv_proj_fy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -33,11 +45,12 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            android:text="FY : 2021 - 2022"
+            android:text=""
             android:textColor="#364F6B"
             android:textSize="16sp" />
 
         <RelativeLayout
+            android:id="@+id/rl_scheme_holder"
             android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_alignParentEnd="true"
@@ -45,21 +58,22 @@
             android:layout_marginEnd="8dp"
             android:orientation="vertical">
 
-            <TextView
+            <views.MonSemiBold
                 android:id="@+id/cell_tv_scheme_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="MANREGA"
+                android:layout_gravity="bottom"
                 android:textStyle="bold"
                 android:textSize="15sp"
-                android:layout_gravity="bottom"/>
-            <TextView
+                android:text="" />
+
+            <views.MonRegular
                 android:layout_below="@+id/cell_tv_scheme_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Scheme"
                 android:textSize="12sp"
-                android:layout_centerHorizontal="true"/>
+                android:layout_centerHorizontal="true" />
 
         </RelativeLayout>
     </RelativeLayout>

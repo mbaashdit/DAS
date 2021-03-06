@@ -75,9 +75,13 @@ public class ProjectDetailsActivity extends AppCompatActivity implements StagesA
         binding.rlViewPhase.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showApproveBottomSheet();
+//                showApproveBottomSheet();
             }
         });
+
+//        RecyclerView mRvPhase = findViewById(R.id.rv_phase_list);
+        binding.rvPhaseList.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvPhaseList.setAdapter(adapter);
     }
 
     @Override
@@ -187,6 +191,6 @@ public class ProjectDetailsActivity extends AppCompatActivity implements StagesA
         intent.putExtra("CURRENT_STAGE_CODE",currentStageCode);
         intent.putExtra("CURRENT_PHASE_CODE",currentPhaseCode);
         startActivity(intent);
-        dialog.dismiss();
+//        dialog.dismiss();
     }
 }

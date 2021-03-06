@@ -48,11 +48,11 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ProjectLis
     public void onBindViewHolder(@NonNull ProjectListHolder holder, int position) {
 
         TagData p = projects.get(position);
-        holder.mTvLat.setText("Latitude : "+p.latitude);
-        holder.mTvLong.setText("Longitude : "+p.longitude);
-        holder.mTvAddress.setText("Address : "+p.address);
+        holder.mTvLat.setText("Lat : "+p.latitude);
+        holder.mTvLong.setText("Long : "+p.longitude);
+        holder.mTvAddress.setText(p.address);
 
-        Glide.with(mContext).load("http://209.97.136.18:8080/dist_auto_system/api/awc/anganwadiConstruction/viewAwcProjectGeoTagImage?projectGeoTaggingId="+p.projectGeoTaggingId)
+        Glide.with(mContext).load(imageUrl+p.projectGeoTaggingId)
                 .thumbnail(0.5f)
                 .placeholder(R.drawable.avatardefault)
                 .error(R.drawable.avatardefault)
