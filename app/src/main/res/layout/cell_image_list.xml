@@ -107,6 +107,15 @@
                     android:textSize="12sp"
                     android:maxLines="3"
                     android:textColor="#FFFFFF" />
+                <views.MonSemiBold
+                    android:id="@+id/cell_tv_dt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/cell_tv_address"
+                    android:layout_marginStart="8dp"
+                    android:textSize="12sp"
+                    android:maxLines="3"
+                    android:textColor="#FFFFFF" />
             </RelativeLayout>
 
         </RelativeLayout>

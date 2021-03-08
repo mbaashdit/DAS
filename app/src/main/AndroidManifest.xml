@@ -33,7 +33,8 @@
             android:name=".activities.GeoTaggingActivity"
             android:windowSoftInputMode="stateAlwaysHidden|adjustResize|adjustPan" />
         <activity android:name=".activities.ProjectDetailsActivity" />
-        <activity android:name=".activities.ProjectListActivity" />
+        <activity android:name=".activities.ProjectListActivity"
+            android:windowSoftInputMode="stateHidden"/>
         <activity
             android:name=".ClosuretakePhotoUploadActivity"
             android:screenOrientation="portrait" />

@@ -19,11 +19,16 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -32,6 +37,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.aashdit.districtautomationsystem.Adapter.AutoSuggestAdapter;
 import com.aashdit.districtautomationsystem.Adapter.ProjectListAdapter;
 import com.aashdit.districtautomationsystem.DashboardActivity;
 import com.aashdit.districtautomationsystem.LoginActivity;
@@ -76,6 +82,13 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
     private ArrayList<Project> projectList = new ArrayList<>();
 
     private ProjectListAdapter adapter;
+
+    private AutoSuggestAdapter autoSuggestAdapter;
+    private static final int TRIGGER_AUTO_COMPLETE = 100;
+    private static final long AUTO_COMPLETE_DELAY = 300;
+    private Handler handler;
+    private String projectName= "";
+
     Long gpId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +110,7 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
             @Override
             public void onRefresh() {
                 binding.swiperefreshlayout.setRefreshing(false);
+                projectName = "";
                 getProjects();
             }
         });
@@ -116,6 +130,59 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
                 startActivity(profileIntent);
             }
         });
+
+        autoSuggestAdapter = new AutoSuggestAdapter(this,
+                android.R.layout.simple_dropdown_item_1line);
+        binding.etSearch.setThreshold(3);
+        binding.etSearch.setAdapter(autoSuggestAdapter);
+        binding.etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                Log.i(TAG, "beforeTextChanged::::: " + charSequence.toString());
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                Log.i(TAG, "onTextChanged::::: " + charSequence.toString());
+//
+                handler.removeMessages(TRIGGER_AUTO_COMPLETE);
+                handler.sendEmptyMessageDelayed(TRIGGER_AUTO_COMPLETE,
+                        AUTO_COMPLETE_DELAY);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (binding.etSearch.getText().toString().contains(" ")) {
+                    Log.i(TAG, "afterTextChanged: " + "Space found");
+                }
+                Log.i(TAG, "afterTextChanged:::: " + binding.etSearch.getText().toString());
+            }
+        });
+
+        binding.etSearch.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Toast.makeText(CreateShgProfileActivity.this,
+//                        autoSuggestAdapter.getItem(position).toString(),
+//                        Toast.LENGTH_LONG).show();
+                 projectName = autoSuggestAdapter.getItem(position);
+                getProjects();
+            }
+        });
+
+        handler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message msg) {
+                if (msg.what == TRIGGER_AUTO_COMPLETE) {
+//                    if (!TextUtils.isEmpty(binding.etSearch.getText())) {
+                        projectName = binding.etSearch.getText().toString();
+                        getProjects();
+//                    }
+                }
+                return false;
+            }
+        });
+
 
         getLocation();
         builder = new AlertDialog.Builder(this);
@@ -191,7 +258,8 @@ public class ProjectListActivity extends AppCompatActivity implements ProjectLis
         alert.show();
     }
     private void getProjects() {
-        AndroidNetworking.get(ServerApiList.BASE_URL.concat("api/awc/anganwadiConstruction/getProjectListByGpId?gpId="+gpId))
+        AndroidNetworking.get(ServerApiList.BASE_URL.concat("api/awc/anganwadiConstruction/getProjectListByGpId?gpId="
+                +gpId+"&projectName="+projectName))
                 .setTag("stopWorkPlan")
                 .setPriority(Priority.HIGH)
                 .build()

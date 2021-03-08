@@ -5,14 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aashdit.districtautomationsystem.R;
-import com.aashdit.districtautomationsystem.model.Stage;
 import com.aashdit.districtautomationsystem.model.TagData;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -46,11 +44,13 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ProjectLis
 
     @Override
     public void onBindViewHolder(@NonNull ProjectListHolder holder, int position) {
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
 
         TagData p = projects.get(position);
         holder.mTvLat.setText("Lat : "+p.latitude);
         holder.mTvLong.setText("Long : "+p.longitude);
         holder.mTvAddress.setText(p.address);
+        holder.mTvDateTime.setText(p.createdDateWithTime);
 
         Glide.with(mContext).load(imageUrl+p.projectGeoTaggingId)
                 .thumbnail(0.5f)
@@ -65,18 +65,8 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ProjectLis
             holder.mIvDelete.setVisibility(View.GONE);
         }
 
-        holder.mIvZoom.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                imagesListener.onImageZoom(position,p.projectGeoTaggingId);
-            }
-        });
-        holder.mIvDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                imagesListener.onImageDelete(position,p.projectGeoTaggingId);
-            }
-        });
+        holder.mIvZoom.setOnClickListener(v -> imagesListener.onImageZoom(position,p.projectGeoTaggingId));
+        holder.mIvDelete.setOnClickListener(v -> imagesListener.onImageDelete(position, p.projectGeoTaggingId));
 
     }
 
@@ -87,8 +77,8 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ProjectLis
 
     public static class ProjectListHolder extends RecyclerView.ViewHolder {
 
-        TextView mTvLat, mTvLong,mTvAddress;
-        ImageView mIvImage,mIvDelete,mIvZoom;
+        TextView mTvLat, mTvLong, mTvAddress, mTvDateTime;
+        ImageView mIvImage, mIvDelete, mIvZoom;
 
         public ProjectListHolder(@NonNull View itemView) {
             super(itemView);
@@ -98,6 +88,7 @@ public class ImagesAdapter extends RecyclerView.Adapter<ImagesAdapter.ProjectLis
             mIvImage = itemView.findViewById(R.id.cell_iv_capture);
             mIvDelete = itemView.findViewById(R.id.iv_delete);
             mIvZoom = itemView.findViewById(R.id.iv_zoom);
+            mTvDateTime = itemView.findViewById(R.id.cell_tv_dt);
         }
     }
     ImagesListener imagesListener;

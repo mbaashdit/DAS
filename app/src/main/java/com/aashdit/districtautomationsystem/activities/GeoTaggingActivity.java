@@ -276,20 +276,6 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
                                     latestRemarks = resObj.optString("latestRemarks");
                                     binding.remark.setText(latestRemarks);
                                     imagePath = resObj.optString("imagePath");
-                                    if (stageId.equals(currentStageId)) {
-                                        if (currentPhaseCode.equals("BEFORE_GEO_TAG") || currentPhaseCode.equals("GEO_TAG_REVERTED")) {
-                                            binding.ivGeoTagged.setVisibility(View.VISIBLE);
-//                                        binding.rlSubmitPhase.setVisibility(View.VISIBLE);
-                                            if (tagData.size() > 0) {
-                                                binding.rlSubmitPhase.setVisibility(View.VISIBLE);
-                                            } else {
-                                                binding.rlSubmitPhase.setVisibility(View.GONE);
-                                            }
-                                        } else {
-                                            binding.ivGeoTagged.setVisibility(View.GONE);
-                                            binding.rlSubmitPhase.setVisibility(View.GONE);
-                                        }
-                                    }
                                     JSONArray imageArray = resObj.optJSONArray("geoTagList");
                                     if (imageArray != null && imageArray.length() > 0) {
                                         tagData.clear();
@@ -304,6 +290,25 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
                                     } else {
                                         binding.tvRemarkLbl.setVisibility(View.GONE);
                                         binding.remark.setVisibility(View.GONE);
+                                    }
+                                    if (stageId.equals(currentStageId)) {
+                                        if (currentPhaseCode.equals("BEFORE_GEO_TAG") || currentPhaseCode.equals("GEO_TAG_REVERTED")) {
+                                            binding.ivGeoTagged.setVisibility(View.VISIBLE);
+                                            binding.remark.setEnabled(true);
+                                            binding.remark.setClickable(true);
+//                                        binding.rlSubmitPhase.setVisibility(View.VISIBLE);
+                                            if (tagData.size() > 0) {
+                                                binding.rlSubmitPhase.setVisibility(View.VISIBLE);
+                                            } else {
+                                                binding.rlSubmitPhase.setVisibility(View.GONE);
+                                            }
+                                        } else {
+                                            binding.ivGeoTagged.setVisibility(View.GONE);
+                                            binding.rlSubmitPhase.setVisibility(View.GONE);
+                                        }
+                                    }else{
+                                        binding.remark.setEnabled(false);
+                                        binding.remark.setClickable(false);
                                     }
                                     adapter = new ImagesAdapter(GeoTaggingActivity.this, tagData, imagePath, currentPhaseCode, currentStageCode, stageCode);
                                     adapter.setImagesListener(GeoTaggingActivity.this);
