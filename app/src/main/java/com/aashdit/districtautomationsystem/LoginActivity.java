@@ -28,6 +28,7 @@ import androidx.core.content.ContextCompat;
 
 import com.aashdit.districtautomationsystem.Util.ApiClient;
 import com.aashdit.districtautomationsystem.Util.Constants;
+import com.aashdit.districtautomationsystem.Util.RegPrefManager;
 import com.aashdit.districtautomationsystem.Util.SharedPrefManager;
 import com.aashdit.districtautomationsystem.Util.WebApi;
 import com.aashdit.districtautomationsystem.activities.ProjectListActivity;
@@ -53,7 +54,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private WebApi webApi;
     private boolean flag = false;
     private SharedPrefManager sp;
+    androidx.appcompat.app.AlertDialog.Builder builder;
 
+    private void showLogoutDialog(String msg) {
+        builder.setMessage(msg)
+                .setCancelable(false)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+        //Creating dialog box
+        androidx.appcompat.app.AlertDialog alert = builder.create();
+        //Setting the title manually
+        alert.setTitle("Login");
+        alert.show();
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +84,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         usernameTv = findViewById(R.id.usernameTv);
         passwordTv = findViewById(R.id.passwordTv);
+        builder = new androidx.appcompat.app.AlertDialog.Builder(this);
 
     }
     public static Bitmap drawableToBitmap (Drawable drawable) {
@@ -94,9 +111,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 
                 if (usernameTv.getText().toString().equals("")) {
-                    Toast.makeText(LoginActivity.this, "Enter user name", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(LoginActivity.this, "Enter user name", Toast.LENGTH_SHORT).show();
+                    showLogoutDialog("Enter user name");
                 } else if (passwordTv.getText().toString().equals("")) {
-                    Toast.makeText(LoginActivity.this, "Enter password", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(LoginActivity.this, "Enter password", Toast.LENGTH_SHORT).show();
+                    showLogoutDialog("Enter password");
                 } else {
                     if (flag == false) {
                         showalert("Please Allow Location");
@@ -198,7 +217,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //                            overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
 //
 //                            finish();
-                            Toast.makeText(LoginActivity.this, loginObj.optString("message"), Toast.LENGTH_SHORT).show();
+                            showLogoutDialog(loginObj.optString("message"));
+//                            Toast.makeText(LoginActivity.this, loginObj.optString("message"), Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

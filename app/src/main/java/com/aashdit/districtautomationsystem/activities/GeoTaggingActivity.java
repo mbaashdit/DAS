@@ -336,7 +336,7 @@ public class GeoTaggingActivity extends AppCompatActivity implements LocationLis
         try {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             assert locationManager != null;
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 0, this);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, this);
         } catch (SecurityException e) {
             e.printStackTrace();
         }
